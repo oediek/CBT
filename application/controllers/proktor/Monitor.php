@@ -1,0 +1,112 @@
+<?php if (!defined('BASEPATH')) {
+	exit('No direct script access allowed');
+}
+
+require_once APPPATH . 'controllers/proktor/Home_proktor.php';
+
+class Monitor extends Home_proktor{
+	function ujian(){
+		$this->load->view('proktor/monitor/ujian');
+	}
+
+	function get_ujian(){
+		$jenis = $this->input->get('jenis');
+		if($jenis == 'lalu'){
+			$this->db->where("selesai < now()");
+		}elseif($jenis == 'lanjut'){
+			$this->db->where("mulai > now() AND selesai > now()");
+		}elseif($jenis == 'progres'){
+			$this->db->where("mulai <= now() AND selesai >= now()");
+		}
+		$this->db->join('peserta', 'ujian.ujian_id = peserta.ujian_id');
+		$this->db->group_by('ujian.ujian_id');
+		$this->db->select('ujian.ujian_id, judul');
+		$this->db->select('COUNT(peserta.login) AS jml_peserta');
+		$this->db->select("(SELECT COUNT(*) FROM peserta WHERE ujian_id = ujian.ujian_id AND status = 0) AS belum_login");
+		$this->db->select("(SELECT COUNT(*) FROM peserta WHERE ujian_id = ujian.ujian_id AND status = 1) AS pending");
+		$this->db->select("(SELECT COUNT(*) FROM peserta WHERE ujian_id = ujian.ujian_id AND status = 2) AS progres");
+		$this->db->select("(SELECT COUNT(*) FROM peserta WHERE ujian_id = ujian.ujian_id AND status = 3) AS selesai");
+		$this->db->order_by('mulai');
+		$data = $this->db->get('ujian')->result();
+		json_output(200, $data);
+	}
+
+	function peserta(){
+		// daftar ujian yang tersedia
+		$this->db->select('ujian_id, judul');
+		$this->db->order_by('judul');
+		$data['ujian'] = $this->db->get('ujian')->result();
+
+		$ujian_id = $this->input->get('ujian_id');
+		$data['peserta'] = array();
+		$data['ujian_id'] = $ujian_id;
+		$this->load->view('proktor/monitor/peserta', $data);
+	}
+
+	function get_peserta(){
+		$ujian_id = $this->input->get('ujian_id');
+		if(!empty($ujian_id)){
+			$this->db->where('ujian_id', $ujian_id);
+			$this->db->order_by('last_login', 'desc');
+			$this->db->select('*');
+			$this->db->select('(SELECT COUNT(*) FROM peserta_jawaban WHERE ujian_id = peserta.ujian_id AND login = peserta.login AND ragu = 0) AS terjawab');
+			$this->db->select('(SELECT COUNT(*) FROM peserta_jawaban WHERE ujian_id = peserta.ujian_id AND login = peserta.login AND ragu = 1) AS ragu');
+			$data['peserta'] = $this->db->get('peserta')->result();
+
+			$this->db->where('ujian_id', $ujian_id);
+			$data['jml_soal'] = $this->db->count_all_results('soal');
+			json_output(200, $data);
+		}
+	}
+
+	function get_detail_peserta(){
+		// ambil biodata data peserta
+		$login = $this->input->get('login');
+		$ujian_id = $this->input->get('ujian_id');
+
+		$this->db->where('login', $login);
+		$this->db->where('ujian_id', $ujian_id);
+		$this->db->select('nama, status');
+		$r = $this->db->get('peserta')->row();
+		$data['nama_peserta'] = $r->nama;
+		$data['status'] = $r->status;
+
+		// ambil data ujian
+		$this->db->where('ujian_id', $ujian_id);
+		$this->db->select('judul, selesai');
+		$r = $this->db->get('ujian')->row();
+		$data['nama_ujian'] = $r->judul;
+		$data['waktu_selesai'] = $r->selesai;
+
+		// ambil data jawaban
+		$data['jawaban'] = $this->get_jawaban_peserta();
+
+		json_output(200, $data);
+	}
+
+	function reset_peserta(){
+		$data = $this->input->get();
+		$this->db->where('login', $data['login']);
+		$this->db->where('ujian_id', $data['ujian_id']);
+		$this->db->set('status', '0');
+		$this->db->update('peserta');
+		json_output(200, array('message' => 'ok'));
+	}
+
+	private function get_jawaban_peserta(){
+		// ambil biodata data peserta
+		$login = $this->input->get('login');
+		$ujian_id = $this->input->get('ujian_id');
+
+		$sql = "SELECT a.no_soal, b.pilihan, b.ragu 
+				FROM soal a
+				LEFT JOIN peserta_jawaban b 
+				ON a.ujian_id = b.ujian_id 
+				AND  a.no_soal = b.no_soal 
+				AND b.login = '$login'
+				WHERE a.ujian_id = '$ujian_id'";
+		return $this->db->query($sql)->result();
+
+	}
+
+}
