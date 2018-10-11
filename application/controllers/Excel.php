@@ -59,7 +59,7 @@ class Excel extends CI_Controller {
 				'pesan' => 'gagal'
 			);
 		}
-		echo json_encode($hasil);
+		json_output($hasil);
 	}
 
 	function reset_status_login_siswa(){

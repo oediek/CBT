@@ -57,5 +57,18 @@ class Alat extends Home_proktor{
 		json_output(200, $data);
 	}
 
+	function do_reset(){
+		// hapus data peserta dan ujian
+		$this->db->query('DELETE FROM peserta_jawaban');
+		$this->db->query('DELETE FROM peserta');
+		$this->db->query('DELETE FROM pilihan_jawaban');
+		$this->db->query('DELETE FROM soal');
+		$this->db->query('DELETE FROM ujian');
+		// hapus folder gambar
+		hapus_folder('images');
+		mkdir('images');
+		json_output(200, array('pesan'=> 'ok'));
+	} 
+
 
 }
