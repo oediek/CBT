@@ -235,7 +235,7 @@
                     colors: ['#e91e63', '#03a9f4', '#673ab7'],
                     formatter: function (y) {
                         var jml_ujian = this.ujian_lalu.length + this.ujian_progres.length + this.ujian_lanjut.length
-                        return Math.round(1/jml_ujian*100) + '%';
+                        return Math.round(y/jml_ujian*100) + '%';
                     }.bind(this)
                 });              
             },
