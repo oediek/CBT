@@ -17,6 +17,13 @@ class Excel extends CI_Controller {
 			}else{
 				$ujian_id = $post['ujian_id'];
 
+				// Periksa apakah id ujian telah tersedia
+				$this->db->where("ujian_id='$ujian_id'");
+				if($this->db->count_all_results('ujian') == 0){
+					echo json_encode(array('pesan' => 'terkunci'));
+					die();
+				}
+
 				// Periksa apakah soal ujian sudah terkunci
 				$this->db->where("ujian_id='$ujian_id' AND status_soal=2");
 				if($this->db->count_all_results('ujian') > 0){
@@ -59,7 +66,7 @@ class Excel extends CI_Controller {
 				'pesan' => 'gagal'
 			);
 		}
-		json_output($hasil);
+		json_output(200, $hasil);
 	}
 
 	function reset_status_login_siswa(){
