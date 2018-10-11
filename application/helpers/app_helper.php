@@ -9,11 +9,11 @@ function flip_tanggal($prm_tgl, $separator1 = '/', $separator2 = '/'){
 function get_inner_html($node) {
     $innerHTML= '';
     $children = $node->childNodes;
-     
+    
     foreach ($children as $child){
         $innerHTML .= $child->ownerDocument->saveXML( $child );
     }
-     
+    
     return $innerHTML;
 }
 
@@ -72,7 +72,7 @@ function mysqldate_to_str($date){
     $tmp = explode(' ', $date);
     $tgl = flip_tanggal($tmp[0],'-', '-');
     $jam = $tmp[1];
-
+    
     $dmy = explode('-', $tgl);
     return $dmy[0] . ' ' . bulan($dmy[1]) . ' ' . $dmy[2] . ', ' . $jam;
 }
@@ -109,4 +109,74 @@ function json_output($statusHeader,$response){
     $ci->output->set_content_type('application/json');
     $ci->output->set_status_header($statusHeader);
     $ci->output->set_output(json_encode($response));
+}
+
+function arsipkan_folder($dir, $zip_file = 'file.zip'){
+    
+    
+    // Get real path for our folder
+    $rootPath = realpath($dir);
+    
+    // Initialize archive object
+    $zip = new ZipArchive();
+    $zip->open($zip_file, ZipArchive::CREATE);
+    
+    // Create recursive directory iterator
+    /** @var SplFileInfo[] $files */
+    $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($rootPath),
+        RecursiveIteratorIterator::LEAVES_ONLY
+    );
+    
+    foreach ($files as $name => $file)
+    {
+        // Skip directories (they would be added automatically)
+        if (!$file->isDir())
+        {
+            // Get real and relative path for current file
+            $filePath = $file->getRealPath();
+            $relativePath = substr($filePath, strlen($rootPath) + 1);
+            
+            // echo $filePath . '<br>';
+            // echo $relativePath . '<br>';
+            
+            // Add current file to archive
+            $zip->addFile($filePath, $relativePath);
+        }
+    }
+    
+    // Zip archive will be created only after closing object
+    $zip->close();
+    
+    
+}
+
+function salin_folder($src, $dst) {
+    $dir = opendir($src);
+    @mkdir($dst);
+    while(false !== ( $file = readdir($dir)) ) {
+        if (( $file != '.' ) && ( $file != '..' )) {
+            if ( is_dir($src . '/' . $file) ) {
+                salin_folder($src . '/' . $file,$dst . '/' . $file);
+            }
+            else {
+                copy($src . '/' . $file,$dst . '/' . $file);
+            }
+        }
+    }
+    closedir($dir);
+}
+
+function hapus_folder($dir){
+    $it = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
+    $files = new RecursiveIteratorIterator($it,
+    RecursiveIteratorIterator::CHILD_FIRST);
+    foreach($files as $file) {
+        if ($file->isDir()){
+            rmdir($file->getRealPath());
+        } else {
+            unlink($file->getRealPath());
+        }
+    }
+    rmdir($dir);
 }

@@ -27,6 +27,12 @@
                         </div>
                         <div class="body">
 							<form action="?d=proktor&c=profil&m=submit_edit" method="post" id="frm-editor-profil">
+                                <label>Login</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        <input type="text" name="login" class="form-control" value="<?=$profil->login?>" disabled>
+                                    </div>
+                                </div>
                                 <label>Nama Lengkap</label>
                                 <div class="form-group">
                                     <div class="form-line">

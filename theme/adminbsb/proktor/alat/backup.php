@@ -21,7 +21,7 @@
                         </div>
                         <div class="body">
 							<p>Pencadangan dapat dilakukan dengan cara yang cukup sederhana, cukup klik tombol cadangkan sistem, sistem akan secara otomatis melakukan pencadangan pada komputer lokal anda. Data yang dicadangkan meliputi : data ujian, peserta, soal, media (gambar maupun video) sekaligus jawaban yang pernah dimasukkan oleh peserta</p>
-							<button class="btn btn-primary waves-effect">CADANGKAN SISTEM</button>
+							<button class="btn btn-primary waves-effect btn-cadang">CADANGKAN SISTEM</button>
                         </div>
                     </div>
                 </div>
@@ -30,3 +30,11 @@
     </section>
 
 <?php $this->load->view('proktor/footer')?>
+
+<script>
+    $(function(){
+        $(document).on('click', '.btn-cadang', function(){
+            document.location.href="<?=site_url('d=proktor&c=alat&m=do_backup')?>";
+        });
+    });
+</script>
