@@ -10,6 +10,10 @@
                 </h2>
             </div>
 
+            <?php if(!empty($this->session->pesan)):?>
+                <?=$this->session->pesan?>
+            <?php endif?>
+
             <div class="row clearfix">
                 <div class="col-lg-12">
                     <div class="card">
@@ -25,7 +29,7 @@
                             </div>
 							<p>Pemulihan merupakan tindakan pengembalian kondisi sistem agar sama persis dengan kondisi ketika dilakukan pencadangan. Oleh sebab itu, tindakan pemulihan hanya dapat dilakukan ketika kita pernah melakukan pencadangan dan memiliki arsip pencadangan pada komputer lokal. Pilih salah satu arsip pencadangan sesuai dengan kebutuhan.</p>
 
-							<form action="" method="post" enctype="multipart/form-data">
+							<form action="?d=proktor&c=alat&m=do_restore" method="post" enctype="multipart/form-data">
                                 <label>Arsip pencadangan</label>
                                 <div class="form-group">
                                     <div class="form-line">
