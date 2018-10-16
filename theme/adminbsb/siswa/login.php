@@ -79,14 +79,9 @@
                     <small class="help-block">Ujian hanya tersedia sesuai dengan waktu saat ini, ujian yang belum berlangsung tidak muncul dalam daftar pilihan.</small>
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-block bg-pink waves-effect" type="submit">SIGN IN</button>
+                            <button class="btn btn-block bg-pink waves-effect" type="submit">LOGIN</button>
                         </div>
-                    </div>
-                    <div class="row m-t-15 m-b--20">
-                        <div class="col-xs-6">
-                            <a href="<?=site_url('?c=login&m=login_proktor')?>">Login Proktor</a>
-                        </div>
-                    </div>
+                    </div>                   
                 </form>
             </div>
         </div>
