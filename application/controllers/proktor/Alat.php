@@ -39,9 +39,8 @@ class Alat extends Home_proktor{
 		salin_folder(FCPATH . 'images', $backup_dir . '/images');
 		
 		// arsipkan folder backup
-		$zip_file = 'backup_CBT_' . date('d-m-Y') . '_' . $token . '.zip';
+		$zip_file = './public/backup_CBT_' . date('d-m-Y') . '_' . $token . '.zip';
 		arsipkan_folder($backup_dir, $zip_file);
-		hapus_folder($backup_dir);
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment; filename='.basename($zip_file));
@@ -51,6 +50,7 @@ class Alat extends Home_proktor{
 		header('Pragma: public');
 		header('Content-Length: ' . filesize($zip_file));
 		readfile($zip_file);
+		rrmdir($backup_dir);
 		unlink($zip_file);
 		
 	}
@@ -69,14 +69,14 @@ class Alat extends Home_proktor{
 		$this->load->library('upload', $config);
 		
 		if ( ! $this->upload->do_upload('arsip')){
-			// 2. reset seluruh ujian
-			$this->_do_reset();
-
 			$pesan = $this->upload->display_errors("<div class=\"alert alert-danger\">", "</div>");
 			$this->session->pesan = $pesan;
 			$this->session->mark_as_flash('pesan');
 			redirect('?d=proktor&c=alat&m=restore');
 		}else{
+			// 2. reset seluruh ujian
+			$this->_do_reset();
+
 			// 3. ekstrak backup
 			$backup_file = $this->upload->data('full_path');
 			$backup_raw = $this->upload->data('raw_name');
