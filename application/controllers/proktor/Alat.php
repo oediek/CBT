@@ -61,6 +61,7 @@ class Alat extends Home_proktor{
 	} 
 	
 	function do_restore(){
+		// 1. unggah backup
 		$config['upload_path']          = './public/';
 		$config['allowed_types']        = 'zip';
 		$config['max_size']             = 1048576;
@@ -68,12 +69,34 @@ class Alat extends Home_proktor{
 		$this->load->library('upload', $config);
 		
 		if ( ! $this->upload->do_upload('arsip')){
+			// 2. reset seluruh ujian
+			$this->_do_reset();
+
 			$pesan = $this->upload->display_errors("<div class=\"alert alert-danger\">", "</div>");
 			$this->session->pesan = $pesan;
 			$this->session->mark_as_flash('pesan');
 			redirect('?d=proktor&c=alat&m=restore');
 		}else{
-			$data = array('upload_data' => $this->upload->data());			
+			// 3. ekstrak backup
+			$backup_file = $this->upload->data('full_path');
+			$backup_raw = $this->upload->data('raw_name');
+			$ekstrak_path = FCPATH . 'public/' . $backup_raw;
+			$berhasil_ekstrak = ekstrak_zip($backup_file, $ekstrak_path);
+
+			// 4. pindahkan gambar
+			rcopy($ekstrak_path . '/images', FCPATH . 'images');
+			rrmdir($ekstrak_path . '/images');
+
+			// 5. baca data json, sekaligus masukkan ke database
+			$string = file_get_contents($ekstrak_path . '/data.json');
+			$data = json_decode($string, true);
+			$this->_pemulihan_data($data);
+
+			// 6. hapus sisa backup yg tak diperlukan lagi
+			unlink($backup_file);
+			rrmdir($ekstrak_path);
+
+			// $data = array('upload_data' => $this->upload->data());			
 			$pesan = "<div class=\"alert alert-success\">Proses restore telah berhasil dilaksanakan</div>";
 			$this->session->pesan = $pesan;
 			$this->session->mark_as_flash('pesan');
@@ -89,10 +112,28 @@ class Alat extends Home_proktor{
 		$this->db->query('DELETE FROM soal');
 		$this->db->query('DELETE FROM ujian');
 		// hapus folder gambar
-		hapus_folder('images');
+		rrmdir('images');
 		mkdir('images');
 		
 	}
-	
+
+	private function _pemulihan_data($data){
+		foreach($data as $nama_tabel => $tabel){
+			$add_sql = array();
+			foreach($tabel as $row){
+				$d = array();
+				foreach($row as $kolom){
+					$d[] = $this->db->escape($kolom);
+				}
+				$add_sql[] = '(' . implode(',', $d) . ')';
+			}
+			$add_sql = implode(',', $add_sql);
+			if(!empty($add_sql)){
+				$sql = "INSERT INTO $nama_tabel VALUES $add_sql";
+				$this->db->query($sql);
+			}
+		}
+	}
+
 	
 }

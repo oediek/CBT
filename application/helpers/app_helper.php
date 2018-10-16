@@ -111,6 +111,18 @@ function json_output($statusHeader,$response){
     $ci->output->set_output(json_encode($response));
 }
 
+function ekstrak_zip($zip_file, $dir_target){
+    $zip = new ZipArchive;
+    $res = $zip->open($zip_file);
+    if ($res === TRUE) {
+        $zip->extractTo($dir_target);
+        $zip->close();
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function arsipkan_folder($dir, $zip_file = 'file.zip'){
     
     
@@ -167,16 +179,26 @@ function salin_folder($src, $dst) {
     closedir($dir);
 }
 
-function hapus_folder($dir){
-    $it = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
-    $files = new RecursiveIteratorIterator($it,
-    RecursiveIteratorIterator::CHILD_FIRST);
-    foreach($files as $file) {
-        if ($file->isDir()){
-            rmdir($file->getRealPath());
-        } else {
-            unlink($file->getRealPath());
-        }
+// Function to remove folders and files 
+function rrmdir($dir) {
+    if (is_dir($dir)) {
+        $files = scandir($dir);
+        foreach ($files as $file)
+        if ($file != "." && $file != "..") rrmdir("$dir/$file");
+        rmdir($dir);
     }
-    rmdir($dir);
+    else if (file_exists($dir)) unlink($dir);
+}
+
+// Function to Copy folders and files       
+function rcopy($src, $dst) {
+    if (file_exists ( $dst )) rrmdir ( $dst );
+    if (is_dir ( $src )) {
+        mkdir ( $dst );
+        $files = scandir ( $src );
+        foreach ( $files as $file )
+        if ($file != "." && $file != "..")
+        rcopy ( "$src/$file", "$dst/$file" );
+    } else if (file_exists ( $src ))
+    copy ( $src, $dst );
 }

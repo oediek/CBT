@@ -29,7 +29,7 @@
                             </div>
 							<p>Pemulihan merupakan tindakan pengembalian kondisi sistem agar sama persis dengan kondisi ketika dilakukan pencadangan. Oleh sebab itu, tindakan pemulihan hanya dapat dilakukan ketika kita pernah melakukan pencadangan dan memiliki arsip pencadangan pada komputer lokal. Pilih salah satu arsip pencadangan sesuai dengan kebutuhan.</p>
 
-							<form action="?d=proktor&c=alat&m=do_restore" method="post" enctype="multipart/form-data">
+							<form action="?d=proktor&c=alat&m=do_restore" method="post" enctype="multipart/form-data" id="frm-restore">
                                 <label>Arsip pencadangan</label>
                                 <div class="form-group">
                                     <div class="form-line">
@@ -37,7 +37,7 @@
                                     </div>
                                     <small class="help-block">Pilih salah satu arsip pencadangan yang pernah anda buat</small>
                                 </div>
-                                <button type="submit" class="btn btn-primary waves-effect">PULIHKAN SISTEM</button>  
+                                <button type="button" class="btn btn-primary waves-effect btn-restore">PULIHKAN SISTEM</button>  
                             </form>
                         </div>
                     </div>
@@ -47,3 +47,25 @@
     </section>
 
 <?php $this->load->view('proktor/footer')?>
+<script>
+$(function(){
+    $('.btn-restore').on('click', function(){
+        swal({
+            title: "Anda yakin ?",
+            text: "Seluruh data ujian dan peserta akan hilang dan dikondisikan seperti data pemulihan, anda yakin ?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Ya, Saya yakin",
+            cancelButtonText: "Tidak",
+            closeOnConfirm: true
+        },function(isRestore){
+            if(isRestore){
+                console.log('proses reset');
+                $('#frm-restore').trigger('submit');
+            }
+        });
+    });
+})
+ 
+</script>
