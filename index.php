@@ -143,7 +143,7 @@ switch (ENVIRONMENT)
  *
  * NO TRAILING SLASH!
  */
-	$view_folder = 'theme/adminbsb';
+	$view_folder = 'theme/default';
 
 
 /*

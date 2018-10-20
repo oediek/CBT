@@ -60,16 +60,7 @@ class Ujian extends Home_siswa{
 		$login = $this->session->login;
 
 		// baca kunci jawaban, sekalian hitung skor
-		$this->db->where('ujian_id', $ujian_id);
-		$this->db->where('no_soal', $data['no_soal']);
-		$this->db->where('jawaban', $data['pilihan']);
-		$this->db->select('skor');
-		$q = $this->db->get('soal');
-		if($q->num_rows() > 0){
-			$pilihan_skor = $q->row()->skor;
-		}else{
-			$pilihan_skor = 0;
-		}
+		$pilihan_skor = $this->__get_skor($ujian_id, $data['no_soal'], $data['pilihan']);
 
 		// simpan jawaban
 		$sql = "REPLACE INTO peserta_jawaban 
@@ -111,9 +102,6 @@ class Ujian extends Home_siswa{
 	}
 
 	private function __get_soal($pilihan_acak){
-		// $this->db->where('ujian_id', $this->session->ujian_id);
-		// $this->db->order_by('no_soal');
-		// $soal = $this->db->get('soal')->result();
 
 		$login = $this->session->login;
 		$nis = $this->session->nis;
@@ -142,6 +130,9 @@ class Ujian extends Home_siswa{
 				shuffle($tmp2);
 			}
 
+			// ganti index agar tida menjadi array asosiatif
+			$tmp2 = array_values($tmp2);
+
 			$tmp->pilihan_jawaban = $tmp2;
 			$data[] = $tmp;
 		}
@@ -154,4 +145,16 @@ class Ujian extends Home_siswa{
 		return $data;
 	}
 
+	private function __get_skor($ujian_id, $no_soal, $pilihan){
+		$this->db->where('ujian_id', $ujian_id);
+		$this->db->where('no_soal', $no_soal);
+		$this->db->where('jawaban', $pilihan);
+		$this->db->select('skor');
+		$q = $this->db->get('soal');
+		if($q->num_rows() > 0){
+			return $q->row()->skor;
+		}else{
+			return 0;
+		}
+	}
 }
