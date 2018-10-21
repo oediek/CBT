@@ -67,8 +67,7 @@
                                 <tr>
                                     <td>Kode Ujian</td>
                                     <td>
-                                        <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-                                        <select name="ujian_id" required="">
+                                        <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span><select name="ujian_id" required="">
                                             <option value="">-- Pilih Ujian --</option>
                                             <?php foreach($arr_ujian_aktif as $r):?>
                                             <option value="<?=$r->ujian_id?>"><?=$r->judul?></option>

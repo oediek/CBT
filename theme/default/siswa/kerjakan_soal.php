@@ -25,7 +25,7 @@
                     </div>
                     <div id="waktu">
                         <span>Sisa Waktu</span>
-                        <span class="sisa" id="countdown">{{sisaWaktu}}</span>
+                        <span class="sisa">{{sisaWaktu}}</span>
                     </div>
                     <div class="clear"></div>
                 </div>
@@ -40,15 +40,12 @@
                                 <span :class="(pilihan.pilihan_ke == soalJson[idxSoal].pilihan) ? 'option checked' : 'option'" >
                                     <span class="inneroption"> {{String.fromCharCode(65 + idx)}} </span>
                                 </span>
-                                <p><span style="font-family:Arial; font-size:14pt" v-html="pilihan.konten"></span></p>
+                                <p><span v-html="pilihan.konten"></span></p>
                             </div>
-
+                            
                         </div>
                     </div>
-                </div>
-                <div id="pilihan-body">
-                    
-                </div>
+                </div>               
                 <div id="soal-foot">
                     <table width="100%">
                         <tbody><tr>
@@ -61,20 +58,37 @@
                                 <button type="button" class="btn btn-warning btn-ragu" :disabled="soalJson[idxSoal].pilihan == null">
                                     <span :class="(soalJson[idxSoal].ragu != 1) ? 'glyphicon glyphicon-unchecked' : 'glyphicon glyphicon-check'" aria-hidden="true"></span> RAGU - RAGU
                                 </button></td>
-                            <td align="right">
-                                <button type="button" id="btn-next" class="btn btn-primary" :style="(idxSoal == (soalJson.length - 1)) ? 'display:none' : ''">SOAL BERIKUTNYA 
-                                    <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-                                </button>
-                            </td>
-                            <td align="right"><button :style="(idxSoal == (soalJson.length - 1)) ? '' : 'display:none'" type="button" id="last-soal" class="btn btn-primary">KUMPULKAN JAWABAN<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button></td>
-                        </tr>
-                    </tbody></table>
+                                <td align="right">
+                                    <button type="button" id="btn-next" class="btn btn-primary" :style="(idxSoal == (soalJson.length - 1)) ? 'display:none' : ''">SOAL BERIKUTNYA 
+                                        <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                                <td align="right">
+                                    <button :style="(idxSoal == (soalJson.length - 1)) ? '' : 'display:none'" type="button" id="btn-kumpul" class="btn btn-primary ">KUMPULKAN JAWABAN
+                                        <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
+
+        <div id="summary-button" class="" style="right: 0px;">
+            <button type="button" class="btn btn-danger"><span class="summary-nav glyphicon glyphicon-menu-left" style="position:relative; top:10px"></span> <span class="cpt">Daftar <br>Soal</span></button>
+        </div>
+        
+        <div id="summary" style="display: none;">
+            <div v-for="soal, idx in soalJson" :class="cssSummary(idx)" :data-idx="idx">
+                <p>{{idx+1}}</p>
+                <span><span class="inneroption">{{soal.pilihan}}</span></span>
+            </div>            
         </div>
     </div>
     
 </div>
+
 
 <?php $this->load->view('siswa/footer')?>
 <!-- plugin vue -->
@@ -82,27 +96,69 @@
 
 <script>
     $(function(){
+
+        // Inisialisasi vue
         var vueApp = new Vue({
             el: '#app-vue',
             data: {
                 idxSoal: 0,
-                sisaWaktu: '00:00',
-                soalJson : <?=$soal_json?>
-            }
+                sisaWaktu: '--:--',
+                soalJson : <?=$soal_json?>,
+                cssSummary : function(idx){
+                    var done = (this.soalJson[idx].pilihan == null) ? 'not-done ' : 'done ';
+                    var active = (this.soalJson[idx].ragu != '1' && this.soalJson[idx].pilihan != null) ? 'active ' : ' ';
+                    return 'no ' + done + active;
+                }
+            }            
         });
         
+        // Klik Next
         $('#btn-next').on('click', function(){
             if(vueApp.idxSoal < vueApp.soalJson.length - 1){
                 vueApp.idxSoal += 1;
             }
         });
         
+        // Klik Prev
         $('#btn-prev').on('click', function(){
             if(vueApp.idxSoal > 0){
                 vueApp.idxSoal += -1;
             }
         });
-
+        
+        // Klik kumpulkan jawaban
+        $('#btn-kumpul').on('click', function(){                              
+            if(adaRagu()){
+                swal({
+                    title: "Terdapat Jawaban Ragu !!!",
+                    text: "Anda tidak bisa menyelesaikan ujian sekarang, terdapat jawaban yang berstatus ragu-ragu",
+                    type: "warning",
+                });
+                return;
+            }
+            if(vueApp.sisaWaktu != "KADALUARSA"){
+                swal({
+                    title: "Anda yakin ?",
+                    text: "Periksa seluruh jawaban sebelum menyelesaikan ujian. \
+                    Masih ada waktu sekitar " + vueApp.sisaWaktu + ", \
+                    pastikan seluruh jawaban telah terpenuhi. Apakah anda yakin ingin menyelesaikan ujian ?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Ya",
+                    cancelButtonText: "Tidak",
+                    closeOnConfirm: false                
+                },function(keluar){
+                    if(keluar){
+                        location.href = "<?=site_url('?c=login&m=logout_siswa')?>";
+                    }
+                });
+            }else{
+                location.href = "<?=site_url('?c=login&m=logout_siswa')?>";
+            }
+        });
+        
+        // Klik pilihan jawaban
         $(document).on('click', '.options', function(){
             $('.options .option').removeClass('checked');
             $(this).find('.option').addClass('checked');
@@ -119,7 +175,8 @@
                 }
             });
         })
-
+        
+        // Klik tombol ragu
         $(document).on('click', '.btn-ragu', function(){
             var btnRagu = $(this).find('span');
             $('#soal').waitMe();
@@ -137,11 +194,92 @@
             });
             console.log(data);
         });
+        
+        // Klik tombol daftar soal
+        $(document).on('click', '#summary-button', function(){
+            console.log($('#summary').toggle());
+            var posisiTombol = $('#summary').is(":visible") ? '365px' : '0px';
+            var cptTombol = $('#summary').is(":visible") ? '&nbsp;<br>&nbsp;' : 'Daftar <br>Soal';
+            $(this).css('right', posisiTombol);
+            $(this).find('.summary-nav').toggleClass('glyphicon-menu-left');
+            $(this).find('.summary-nav').toggleClass('glyphicon-menu-right');
+            $(this).find('.cpt').html(cptTombol);
+        });
 
+        // Klik tombol nomor soall pada bagian summary
+        $(document).on('click', '.no', function(){
+            vueApp.idxSoal = $(this).data('idx');
+            $('#summary-button').trigger('click');
+        });
+
+        var adaRagu = function(){
+            var hasil = false;
+            $.each(vueApp.soalJson, function(k, v){
+                console.log(v.ragu);
+                if(v.ragu == "1"){
+                    hasil = true;
+                    return;
+                }
+            });
+            return hasil;
+        }
+        
+        var hitungMundur = function(){
+            // Set the date we're counting down to
+            var countDownDate = new Date("<?=$ujian_selesai?>").getTime();
+            
+            var now = new Date("<?=$skrg?>").getTime();
+            var distance = countDownDate - now;
+            
+            // Update the count down every 1 second
+            var x = setInterval(function() {
+                
+                distance = distance - 1000;
+                
+                var hours = Math.floor(distance  / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                // $('.info-sisa-waktu').html(hours + ':' + minutes + ':' + seconds);
+                vueApp.sisaWaktu = hours + ':' + minutes + ':' + seconds;
+                
+                
+                // If the count down is over, write some text 
+                if (distance < 0) {
+                    clearInterval(x);
+                    vueApp.sisaWaktu = "KADALUARSA";
+                    swal({
+                        title: "Waktu Habis !!!",
+                        text: "Waktu anda telah habis, pekerjaan anda akan dikumpulkan secara otomatis",
+                        type: "warning",
+                    }, function(){
+                        location.href = "<?=site_url('?c=login&m=logout_siswa')?>"
+                    });
+                    setTimeout(function(){
+                        location.href = "<?=site_url('?c=login&m=logout_siswa')?>"
+                    }, 5000)
+                    
+                    
+                }
+            }, 1000);
+        }
+        
+        $(document).on('click', '.a1', function(){
+            $('#soal-body').css('font-size', '12pt');
+        })
+        
+        $(document).on('click', '.a2', function(){
+            $('#soal-body').css('font-size', '16pt');
+        })
+        
+        $(document).on('click', '.a3', function(){
+            $('#soal-body').css('font-size', '20pt');
+        })
+        
+        hitungMundur();
         console.log(vueApp.soalJson);
-    
-  
+        
     });
-
-
+    
+    
 </script>

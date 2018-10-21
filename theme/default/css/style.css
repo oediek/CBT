@@ -278,8 +278,8 @@ footer p {
 }
 
 
-#soal-body {
-	font-size: 17.6px;
+#soal-body, #pilihan-body{
+	font-size: 12pt;
 }
 
 #summary-button .btn {
