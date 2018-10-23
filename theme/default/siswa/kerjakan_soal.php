@@ -1,20 +1,8 @@
 <?php $this->load->view('siswa/header')?>
 <?php $soal_json = json_encode($soal ) ?>
+<link rel="stylesheet" href=""<?=base_url('theme/adminbsb/')?>plugins/vue-wysiwyg/vueWysiwyg.css"">
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <?php if($this->session->pesan == 'token_gagal'):?>
-            <div class="col-lg-12">
-                <div class="alert alert-danger">
-                    Token yang anda masukkan tak dikenali
-                </div>
-            </div>
-            <?php else:?>
-            <div style="height:30px;"></div>
-            <?php endif?>
-        </div>
-    </div>
     
     <div class="row" id="app-vue">
         <div class="col-md-12">
@@ -35,14 +23,20 @@
                 <div id="soal-body" style="display: block;">
                     <div class="soal active">
                         <div class="isi-soal" v-html="soalJson[idxSoal].konten"></div>
-                        <div class="options-group">
+                        <div v-if="(soalJson[idxSoal].essay != 1)" class="options-group">
                             <div class="options" v-for="pilihan, idx in soalJson[idxSoal].pilihan_jawaban" :data-pilihan_ke="pilihan.pilihan_ke">
                                 <span :class="(pilihan.pilihan_ke == soalJson[idxSoal].pilihan) ? 'option checked' : 'option'" >
                                     <span class="inneroption"> {{String.fromCharCode(65 + idx)}} </span>
                                 </span>
                                 <p><span v-html="pilihan.konten"></span></p>
-                            </div>
-                            
+                            </div>                            
+                        </div>
+                        <div v-if="(soalJson[idxSoal].essay == 1)">
+                            <vue-mce v-model="soalJson[idxSoal].jawaban_essay"/>
+                        </div>
+                        <div v-if="(soalJson[idxSoal].essay == 1)">
+                            <p>&nbsp;</p>
+                            <button class="btn btn-primary btn-simpan-essay">Simpan Jawaban</button> 
                         </div>
                     </div>
                 </div>               
@@ -74,7 +68,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div id="summary-button" class="" style="right: 0px;">
             <button type="button" class="btn btn-danger"><span class="summary-nav glyphicon glyphicon-menu-left" style="position:relative; top:10px"></span> <span class="cpt">Daftar <br>Soal</span></button>
         </div>
@@ -82,7 +76,7 @@
         <div id="summary" style="display: none;">
             <div v-for="soal, idx in soalJson" :class="cssSummary(idx)" :data-idx="idx">
                 <p>{{idx+1}}</p>
-                <span><span class="inneroption">{{soal.pilihan}}</span></span>
+                <span v-if="soal.essay != 1"><span class="inneroption">{{soal.pilihan}}</span></span>
             </div>            
         </div>
     </div>
@@ -91,13 +85,18 @@
 
 
 <?php $this->load->view('siswa/footer')?>
+<!-- plugin tinymce -->
+<script src="<?=base_url('theme/adminbsb/')?>plugins/vue-tinymce/tinymce/tinymce.min.js"></script> 
 <!-- plugin vue -->
 <script src="<?=base_url('theme/adminbsb/')?>plugins/vue/vue.js"></script> 
+<script src="<?=base_url('theme/adminbsb/')?>plugins/vue-tinymce/vue-mce.web.js"></script> 
+
 
 <script>
     $(function(){
-
+        
         // Inisialisasi vue
+        Vue.use(VueMce);
         var vueApp = new Vue({
             el: '#app-vue',
             data: {
@@ -105,11 +104,16 @@
                 sisaWaktu: '--:--',
                 soalJson : <?=$soal_json?>,
                 cssSummary : function(idx){
-                    var done = (this.soalJson[idx].pilihan == null) ? 'not-done ' : 'done ';
-                    var active = (this.soalJson[idx].ragu != '1' && this.soalJson[idx].pilihan != null) ? 'active ' : ' ';
-                    return 'no ' + done + active;
-                }
-            }            
+                    if(this.soalJson[idx].essay != 1){
+                        var done = (this.soalJson[idx].pilihan == null) ? 'not-done ' : 'done ';
+                        var active = (this.soalJson[idx].ragu != '1' && this.soalJson[idx].pilihan != null) ? 'active ' : ' ';
+                        return 'no ' + done + active;
+                    }else{
+                        var done = (Boolean(this.soalJson[idx].jawaban_essay)) ? 'done active ': 'not-done ';
+                        return 'no ' + done;
+                    }
+                },
+            }
         });
         
         // Klik Next
@@ -167,7 +171,6 @@
                 no_soal : vueApp.soalJson[vueApp.idxSoal].no_soal,
                 pilihan : $(this).data('pilihan_ke')
             }
-            console.log(data);
             $.post("<?=site_url('?d=siswa&c=ujian&m=submit_jawaban')?>", data, function(hasil){
                 if(hasil == 'ok'){
                     $("#soal").waitMe('hide');
@@ -205,13 +208,27 @@
             $(this).find('.summary-nav').toggleClass('glyphicon-menu-right');
             $(this).find('.cpt').html(cptTombol);
         });
-
+        
         // Klik tombol nomor soall pada bagian summary
         $(document).on('click', '.no', function(){
             vueApp.idxSoal = $(this).data('idx');
             $('#summary-button').trigger('click');
         });
-
+        
+        // Klik tombol simpan essay
+        $(document).on('click', '.btn-simpan-essay', function(){            
+            var data = {
+                no_soal : vueApp.soalJson[vueApp.idxSoal].no_soal,
+                essay : vueApp.soalJson[vueApp.idxSoal].jawaban_essay,
+            }
+            $("#soal").waitMe();
+            $.post("<?=site_url('?d=siswa&c=ujian&m=submit_jawaban')?>", data, function(hasil){
+                if(hasil == 'ok'){
+                    $("#soal").waitMe('hide');
+                }
+            });
+        });
+        
         var adaRagu = function(){
             var hasil = false;
             $.each(vueApp.soalJson, function(k, v){
@@ -276,7 +293,12 @@
             $('#soal-body').css('font-size', '20pt');
         })
         
-        hitungMundur();
+        $(document).on('message', 'textarea.tinymce', function(){
+            console.log('text area on input');
+        });
+        
+        hitungMundur();        
+        
         console.log(vueApp.soalJson);
         
     });

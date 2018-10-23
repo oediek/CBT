@@ -172,15 +172,24 @@ class Word extends CI_Controller {
     			// Jika baris merupakan baris soal
     			$soal = array(	'konten' 	=> get_inner_html($kolom->item(1)), 
     							'jawaban' 	=> $kolom->item(2)->nodeValue,
-    							'skor' 		=> $kolom->item(3)->nodeValue,
+								'skor' 		=> $kolom->item(3)->nodeValue,
+								'essay'		=> 0
     						);
     			$arr_soal[$nomor++] = array('soal' 		=> $soal,
     										'pilihan' 	=> array());
-    			log_message('custom', 'soal => ' . $soal['konten']);
-    		}else{
+			}else if($kolom->length == 2){
+				// Jika baris merupakan baris soal essay
+				$soal = array(	'konten' 	=> get_inner_html($kolom->item(1)),
+								'jawaban'	=> '',
+								'skor'		=> 0,     							
+								'essay'		=> 1
+    						);
+    			$arr_soal[$nomor++] = array('soal' 		=> $soal,
+    										'pilihan' 	=> array());
+			}
+			else{
     			// Jika baris merupakan baris jawaban
     			$arr_soal[count($arr_soal)]['pilihan'][$kolom->item(1)->nodeValue] = get_inner_html($kolom->item(2));
-    			log_message('custom', 'pilihan => ' . $kolom->item(1)->nodeValue);
     		}
     	}
 
@@ -214,13 +223,13 @@ class Word extends CI_Controller {
 		$this->db->query($sql);
 
 		// Simpan soal beserta pilihan jawaban
-		$sql = "INSERT INTO soal (ujian_id, no_soal, konten, jawaban, skor) VALUES ";
+		$sql = "INSERT INTO soal (ujian_id, no_soal, essay, konten, jawaban, skor) VALUES ";
 		$sql2 = "INSERT INTO pilihan_jawaban (ujian_id, no_soal, pilihan_ke, konten) VALUES ";
 		$baris = array();
 		$baris2 = array();
 		foreach($arr_soal as $no_soal => $butir){
 			$soal = $butir['soal'];
-			$baris[] = "('$ujian_id', $no_soal, '$soal[konten]', '$soal[jawaban]', $soal[skor])";
+			$baris[] = "('$ujian_id', $no_soal, '$soal[essay]', '$soal[konten]', '$soal[jawaban]', $soal[skor])";
 			foreach($butir['pilihan'] as $pilihan_ke => $konten){
 				$baris2[] = "('$ujian_id', $no_soal, '$pilihan_ke', '$konten')";
 			}

@@ -59,13 +59,23 @@ class Ujian extends Home_siswa{
 		$nis = $this->session->nis;
 		$login = $this->session->login;
 
-		// baca kunci jawaban, sekalian hitung skor
-		$pilihan_skor = $this->__get_skor($ujian_id, $data['no_soal'], $data['pilihan']);
+		if(!empty($data['pilihan'])){
+			// Jika soal adalah pilihan ganda
+
+			// baca kunci jawaban, sekalian hitung skor
+			$pilihan_skor = $this->__get_skor($ujian_id, $data['no_soal'], $data['pilihan']);
+	
+			$add_sql1 = 'pilihan, pilihan_skor';
+			$add_sql2 = "'$data[pilihan]', $pilihan_skor";
+		}else{
+			$add_sql1 = 'essay';
+			$add_sql2 = "'$data[essay]'";
+		}
 
 		// simpan jawaban
 		$sql = "REPLACE INTO peserta_jawaban 
-				(ujian_id, nis, login, no_soal, pilihan, pilihan_skor) VALUES 
-				('$ujian_id', '$nis', '$login', $data[no_soal], '$data[pilihan]', $pilihan_skor)";
+				(ujian_id, nis, login, no_soal, $add_sql1) VALUES 
+				('$ujian_id', '$nis', '$login', $data[no_soal], $add_sql2)";
 		if($this->db->query($sql)){
 			echo 'ok';
 		}
@@ -106,7 +116,8 @@ class Ujian extends Home_siswa{
 		$login = $this->session->login;
 		$nis = $this->session->nis;
 		$ujian_id = $this->session->ujian_id;
-		$sql = "SELECT a.*, b.pilihan, b.ragu
+		$sql = "SELECT a.ujian_id, a.no_soal, a.essay, a.konten,  
+				b.pilihan, b.essay AS jawaban_essay, b.ragu
 				FROM soal a
 				LEFT JOIN peserta_jawaban b ON 
 				a.ujian_id = b.ujian_id AND a.no_soal = b.no_soal AND b.nis = '$nis' AND b.login = '$login'
@@ -130,16 +141,26 @@ class Ujian extends Home_siswa{
 				shuffle($tmp2);
 			}
 
-			// ganti index agar tida menjadi array asosiatif
+			// ganti index agar tidak menjadi array asosiatif
 			$tmp2 = array_values($tmp2);
 
 			$tmp->pilihan_jawaban = $tmp2;
 			$data[] = $tmp;
 		}
 
-		// jika soal diacak
+		// jika soal diacak , acak hanya untuk soal pilihan ganda saja
 		if($pilihan_acak != '0'){
-			shuffle($data);
+			$tmp = array();
+			$tmp2 = array();
+			foreach($data as $r){
+				if($r->essay != 1){
+					$tmp[] = $r;
+				}else{
+					$tmp2[] = $r;
+				}
+			}
+			shuffle($tmp);
+			$data = array_merge($tmp, $tmp2);
 		}
 
 		return $data;
