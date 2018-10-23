@@ -5,6 +5,20 @@
 <!-- JQuery DataTable Css -->
 <link href="<?=base_url('theme/adminbsb/')?>/plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
 
+	<style>
+		.badge-jawaban {
+			position: relative;
+			top: -10px;
+			right: 10px;
+			border-radius: 90px;
+			width: 30px;
+			height: 30px;
+			background-color: #fff;
+			box-shadow: 0 2px 5px rgba(0,0,0,.16), 0 2px 10px rgba(0,0,0,.12);
+			font-weight: bold;
+		}
+	</style>
+
     <section class="content">
         <div class="container-fluid">
             <div class="block-header">
@@ -72,6 +86,9 @@
         </div>
     </section>
 
+
+
+
 	<div class="modal fade in app2" id="modal-detil-peserta" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content detail-peserta">
@@ -85,19 +102,24 @@
                     </ul>
 					<p></p>
 					<p>Jawaban :</p>
-
 					<div class="icon-jawaban-saya icon-button-demo">
 						<span v-for="item in jawaban">
-							<button type="button" :class="'btn btn-circle-lg waves-effect waves-circle waves-float font-bold ' + clsJawaban(item.pilihan, item.ragu)">
+							<div v-if="item.is_essay == 0" type="button" :class="'btn btn-pilihan-ganda waves-effect waves-circle waves-float font-bold ' + clsJawaban(item.pilihan, item.ragu)">
 								{{item.no_soal}}
-							</button>
+							</div>
+							<span v-if="item.is_essay == 0" class="badge-jawaban">{{item.pilihan}}</span>
+							<div v-if="item.is_essay == 1" type="button" :class="'btn btn-essay btn-square-lg waves-effect waves-circle waves-float font-bold ' + clsJawaban(item.essay)">
+								{{item.no_soal}}
+							</div>
 						</span>
 					</div>
-
+					<p>&nbsp;</p>
+					<p>Skor : </p>
+					<h1>{{ skor }}</h1>
 
                 </div>
                 <div class="modal-footer">
-					<button type="button" class="btn-reset-peserta btn btn-primary waves-effect pull-left" v-if="(status=='2' || status=='1')">Reset login</button>
+					<button type="button" class="btn-reset-peserta btn btn-primary waves-effect pull-left" v-if="(status!=0)">Reset login</button>
                     <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">SELESAI</button>
                 </div>
             </div>
@@ -163,6 +185,7 @@
 				namaUjian: '...',
 				sisaWaktu: '...',
 				jawaban: [],
+				skor: 0,
 				clsJawaban: function(jawaban, ragu){
 					var cls = '';
 					if(jawaban != null){
@@ -174,7 +197,10 @@
 						cls = 'btn-default';
 					}
 					return cls;
-				},				
+				},
+				clsJawabanEssay: function(jawaban){
+					return (jawaban.length > 0) ? 'btn-primary' : 'btn-default';
+				},	
 				status: 0,
 			}
 		});
@@ -190,11 +216,17 @@
 				ujian_id: $(this).data('ujian_id'),
 			}
 			$.get('<?=site_url()?>', data, function(hasil){
+				console.log(hasil);
+				var skor = 0;
+				$.each(hasil.jawaban, function(k, v){
+					skor += Number(v.pilihan_skor);
+				});
 				app2.namaPeserta = hasil.nama_peserta;
 				app2.namaUjian = hasil.nama_ujian;
 				app2.sisaWaktu = hasil.waktu_selesai;
 				app2.jawaban = hasil.jawaban;
 				app2.status = hasil.status;
+				app2.skor = skor;
 				app2.login = $(this).data('login');
 				app2.ujian_id = $(this).data('ujian_id');
 				$('.detail-peserta').waitMe('hide');

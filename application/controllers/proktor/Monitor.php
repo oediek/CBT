@@ -98,7 +98,7 @@ class Monitor extends Home_proktor{
 		$login = $this->input->get('login');
 		$ujian_id = $this->input->get('ujian_id');
 
-		$sql = "SELECT a.no_soal, b.pilihan, b.ragu 
+		$sql = "SELECT a.no_soal, a.essay AS is_essay, b.pilihan, b.ragu, b.essay, b.pilihan_skor
 				FROM soal a
 				LEFT JOIN peserta_jawaban b 
 				ON a.ujian_id = b.ujian_id 
