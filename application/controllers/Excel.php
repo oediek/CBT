@@ -14,8 +14,6 @@ class Excel extends CI_Controller {
 
 	function ujian_baru(){
 		$post = $this->input->post();
-			$acak = ($post['acak'] == '1') ? '1' : '0';
-				$this->db->where("ujian_id='$ujian_id'");
 		$selesai = interval_tgl($post['mulai'], $post['alokasi']);
 		$peserta = json_decode($post['peserta'], TRUE);
 		$ujian_id = string_acak(10);
