@@ -10,7 +10,7 @@ class Alat extends Home_proktor{
 	}
 	
 	function restore(){
-		$this->load->view('proktor/alat/restore.php');
+		$this->load->view('proktor/alat/restore');
 	}
 	
 	function reset(){
@@ -56,7 +56,7 @@ class Alat extends Home_proktor{
 	}
 	
 	function do_reset(){
-		$this->_do_reset();
+		data_do_reset();
 		json_output(200, array('pesan'=> 'ok'));
 	} 
 	
@@ -75,7 +75,7 @@ class Alat extends Home_proktor{
 			redirect('?d=proktor&c=alat&m=restore');
 		}else{
 			// 2. reset seluruh ujian
-			$this->_do_reset();
+			data_do_reset();
 
 			// 3. ekstrak backup
 			$backup_file = $this->upload->data('full_path');
@@ -90,7 +90,7 @@ class Alat extends Home_proktor{
 			// 5. baca data json, sekaligus masukkan ke database
 			$string = file_get_contents($ekstrak_path . '/data.json');
 			$data = json_decode($string, true);
-			$this->_pemulihan_data($data);
+			data_do_pemulihan_data($data);
 
 			// 6. hapus sisa backup yg tak diperlukan lagi
 			unlink($backup_file);
@@ -103,37 +103,8 @@ class Alat extends Home_proktor{
 			redirect('?d=proktor&c=alat&m=restore');
 		}
 	}
-	
-	private function _do_reset(){
-		// hapus data peserta dan ujian
-		$this->db->query('DELETE FROM peserta_jawaban');
-		$this->db->query('DELETE FROM peserta');
-		$this->db->query('DELETE FROM pilihan_jawaban');
-		$this->db->query('DELETE FROM soal');
-		$this->db->query('DELETE FROM ujian');
-		// hapus folder gambar
-		rrmdir('images');
-		mkdir('images');
-		
-	}
 
-	private function _pemulihan_data($data){
-		foreach($data as $nama_tabel => $tabel){
-			$add_sql = array();
-			foreach($tabel as $row){
-				$d = array();
-				foreach($row as $kolom){
-					$d[] = $this->db->escape($kolom);
-				}
-				$add_sql[] = '(' . implode(',', $d) . ')';
-			}
-			$add_sql = implode(',', $add_sql);
-			if(!empty($add_sql)){
-				$sql = "INSERT INTO $nama_tabel VALUES $add_sql";
-				$this->db->query($sql);
-			}
-		}
-	}
+	
 
 	
 }

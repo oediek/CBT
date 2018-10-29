@@ -203,3 +203,36 @@ function rcopy($src, $dst) {
     } else if (file_exists ( $src ))
     copy ( $src, $dst );
 }
+
+function data_do_pemulihan_data($data){
+    $CI =& get_instance();
+    foreach($data as $nama_tabel => $tabel){
+        $add_sql = array();
+        foreach($tabel as $row){
+            $d = array();
+            foreach($row as $kolom){
+                $d[] = $CI->db->escape($kolom);
+            }
+            $add_sql[] = '(' . implode(',', $d) . ')';
+        }
+        $add_sql = implode(',', $add_sql);
+        if(!empty($add_sql)){
+            $sql = "INSERT INTO $nama_tabel VALUES $add_sql";
+            $CI->db->query($sql);
+        }
+    }
+}
+
+function data_do_reset(){
+    $CI =& get_instance();
+    // hapus data peserta dan ujian
+    $CI->db->query('DELETE FROM peserta_jawaban');
+    $CI->db->query('DELETE FROM peserta');
+    $CI->db->query('DELETE FROM pilihan_jawaban');
+    $CI->db->query('DELETE FROM soal');
+    $CI->db->query('DELETE FROM ujian');
+    // hapus folder gambar
+    rrmdir('images');
+    mkdir('images');
+    
+}

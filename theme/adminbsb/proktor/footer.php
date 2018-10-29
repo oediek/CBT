@@ -39,7 +39,7 @@
                 confirmButtonColor: "#DD6B55",
                 confirmButtonText: "Ya, Saya ingin keluar",
                 cancelButtonText: "Tidak",
-                closeOnConfirm: false                
+                closeOnConfirm: true                
             },function(keluar){
                 if(keluar){
                     location.href = "<?=site_url('?c=login&m=logout_proktor')?>";

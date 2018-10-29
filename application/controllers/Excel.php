@@ -24,10 +24,10 @@ class Excel extends CI_Controller {
 		$this->db->query($sql);
 
 		// Masukkan data peserta
-		$sql = "INSERT INTO peserta (ujian_id, nis, login, nama, password) VALUES ";
+		$sql = "INSERT INTO peserta (ujian_id, nis, login, nama, password, server) VALUES ";
 		foreach($peserta as $p){
 			$nama = mysqli_real_escape_string($this->db->conn_id, $p['nama']);
-			$rows[] = "('$ujian_id', '$p[nis]', '$p[login]', '$nama', '$p[password]')";
+			$rows[] = "('$ujian_id', '$p[nis]', '$p[login]', '$nama', '$p[password]', '$p[server]')";
 		}
 		$sql .= implode(',', $rows);
 		$this->db->query($sql);
@@ -75,10 +75,10 @@ class Excel extends CI_Controller {
 		$this->db->query("DELETE FROM peserta WHERE ujian_id='$ujian_id'");
 
 		// Masukkan data peserta
-		$sql = "INSERT INTO peserta (ujian_id, nis, login, nama, password) VALUES ";
+		$sql = "INSERT INTO peserta (ujian_id, nis, login, nama, password, server) VALUES ";
 		foreach($peserta as $p){
 			$nama = mysqli_real_escape_string($this->db->conn_id, $p['nama']);
-			$rows[] = "('$ujian_id', '$p[nis]', '$p[login]', '$nama', '$p[password]')";
+			$rows[] = "('$ujian_id', '$p[nis]', '$p[login]', '$nama', '$p[password]', '$p[server]')";
 		}
 		$sql .= implode(',', $rows);
 		$this->db->query($sql);

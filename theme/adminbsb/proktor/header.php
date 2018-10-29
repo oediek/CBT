@@ -156,10 +156,18 @@ function is_active($th){
                         </ul>
                     </li>                       
                     <li class="<?=css_class_active('sinkron')?>">
-                        <a href="<?=site_url('?d=proktor&c=sinkron')?>" class="waves-effect waves-block">
+                        <a href="javascript:void(0)" class="menu-toggle waves-effect waves-block">
                             <i class="material-icons">restore_page</i>
                             <span>Sinkronisasi</span>
                         </a>
+                        <ul class="ml-menu">
+                            <li class="<?=css_class_active('tarik', 'm')?>">
+                                <a href="<?=site_url('?d=proktor&c=sinkron&m=tarik')?>" class="waves-effect waves-block">Tarik</a>
+                            </li>   
+                            <li class="<?=css_class_active('kirim', 'm')?>">
+                                <a href="<?=site_url('?d=proktor&c=sinkron&m=kirim')?>" class="waves-effect waves-block">Kirim</a>
+                            </li>   
+                        </ul>
                     </li>                   
                     <li class="<?=css_class_active('cetak')?>">
                         <a href="javascript:void(0)" class="menu-toggle waves-effect waves-block">
