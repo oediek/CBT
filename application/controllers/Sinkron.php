@@ -48,6 +48,24 @@ class Sinkron extends CI_Controller {
 		unlink($zip_file);
 	}
 
+	function terima_nilai(){
+		$this->__cek_token();		
+		$data = (empty($this->input->post('data'))) ? '' : json_decode($this->input->post('data'), TRUE);
+		// $data = $this->input->post('data');
+
+		if(is_array($data)){
+			// Hapus jawaban peserta yang lama
+			$this->db->query('DELETE FROM peserta_jawaban');
+			
+			// Masukan jawaban baru
+			$aff_rows = $this->db->insert_batch($data);
+		}else{
+			$aff_rows = 0;
+		}
+
+		json_output(200, array('aff_rows' => $aff_rows, 'data' => gettype($data)));
+	}
+
 	private function __cek_token(){
 		$token = $this->input->post('token');
 		if($token != 'kEXCZ9KjumHxTO8dsVyg'){

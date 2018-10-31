@@ -39,7 +39,7 @@
 	                                	<input type="text" class="form-control" name="id_server" placeholder="ID pada server lokal, misal : smp1" value=""" required="">
 	                                </div>
 	                            </div>
-	                            <button type="submit" class="btn btn-primary waves-effect btn-sinkron">SIMPAN</button>	
+	                            <button type="submit" class="btn btn-primary waves-effect btn-sinkron">TARIK</button>	
                         	</form>
 
                         </div>

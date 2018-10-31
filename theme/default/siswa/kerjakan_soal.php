@@ -293,10 +293,6 @@
             $('#soal-body').css('font-size', '20pt');
         })
         
-        $(document).on('message', 'textarea.tinymce', function(){
-            console.log('text area on input');
-        });
-        
         hitungMundur();        
         
         console.log(vueApp.soalJson);

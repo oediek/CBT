@@ -117,7 +117,7 @@ class Ujian extends Home_siswa{
 		$nis = $this->session->nis;
 		$ujian_id = $this->session->ujian_id;
 		$sql = "SELECT a.ujian_id, a.no_soal, a.essay, a.konten,  
-				b.pilihan, b.essay AS jawaban_essay, b.ragu
+				b.pilihan, IFNULL(b.essay, '') AS jawaban_essay, b.ragu
 				FROM soal a
 				LEFT JOIN peserta_jawaban b ON 
 				a.ujian_id = b.ujian_id AND a.no_soal = b.no_soal AND b.nis = '$nis' AND b.login = '$login'
