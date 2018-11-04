@@ -32,7 +32,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <?php if(isset(($this->session->pesan))): ?>
+                <?php if($this->session->pesan !== null): ?>
                     <?php if($this->session->pesan == 'login_gagal'): ?>
                     <div class="alert alert-danger">Login gagal (login salah atau login sudah terpakai)</div>
                     <?php endif?>

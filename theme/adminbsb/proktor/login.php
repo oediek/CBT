@@ -32,7 +32,7 @@
             <a href="javascript:void(0);">Login<b>PROKTOR</b></a>
             <small>Sistem Ujian Dalam Jaringan</small>
         </div>
-          <?php if(isset(($this->session->pesan))): ?>
+          <?php if($this->session->pesan !== null): ?>
             <?php if($this->session->pesan == 'login_gagal'): ?>
               <div class="alert alert-danger">Login gagal (login atau password salah)</div>
             <?php endif?>
