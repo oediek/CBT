@@ -9,7 +9,7 @@
 
             <div class="row clearfix">
 
-				<?php if(isset(($this->session->pesan))): ?>
+				<?php if($this->session->pesan !== null): ?>
 					<?php if($this->session->pesan == 'sukses'): ?>
 					  <div class="alert alert-success">Data sekolah telah diupdate</div>
 					<?php endif?>

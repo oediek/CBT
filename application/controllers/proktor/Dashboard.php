@@ -18,6 +18,7 @@ class Dashboard extends Home_proktor{
 	}
 	
 	private function _jml_ujian($jenis='all'){
+		$this->db->where('status_soal <> 0');
 		if($jenis == 'lalu'){
 			$this->db->where("selesai < now()");
 		}elseif($jenis == 'lanjut'){
@@ -27,8 +28,9 @@ class Dashboard extends Home_proktor{
 		}
 		return $this->db->count_all_results('ujian');
 	}
-
+	
 	private function _list_ujian($jenis='all'){
+		$this->db->where('status_soal <> 0');
 		if($jenis == 'lalu'){
 			$this->db->where("selesai < now()");
 		}elseif($jenis == 'lanjut'){

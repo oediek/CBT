@@ -11,6 +11,7 @@ class Monitor extends Home_proktor{
 
 	function get_ujian(){
 		$jenis = $this->input->get('jenis');
+		$this->db->where('status_soal <> 0');
 		if($jenis == 'lalu'){
 			$this->db->where("selesai < now()");
 		}elseif($jenis == 'lanjut'){
@@ -34,6 +35,7 @@ class Monitor extends Home_proktor{
 	function peserta(){
 		// daftar ujian yang tersedia
 		$this->db->select('ujian_id, judul');
+		$this->db->where('status_soal <> 0');
 		$this->db->order_by('judul');
 		$data['ujian'] = $this->db->get('ujian')->result();
 
