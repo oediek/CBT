@@ -83,7 +83,7 @@
             <!-- User Info -->
             <div class="user-info">
                 <div class="image">
-                    <img src="images/<?=get_app_config('LOGO_SEKOLAH')?>" alt="Logo" width="100" height="100">
+                    <img src="<?=get_app_config('LOGO_SEKOLAH')?>" alt="Logo" width="100" height="100">
                 </div>
                 <div class="info-container">
                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?=$this->session->nama?></div>
