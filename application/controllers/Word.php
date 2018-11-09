@@ -154,12 +154,14 @@ class Word extends CI_Controller {
     	$dom->loadHTML($lembar_soal);
 
     	// Mengekstrak ID Ujian
-    	$temp = explode(':', $dom->getElementsByTagName('td')->item(0)->nodeValue);
-    	$ujian_id = trim($temp[1]);
-
+    	// $temp = explode(':', $dom->getElementsByTagName('td')->item(0)->nodeValue);
+      // $ujian_id = trim($temp[1]);
+      $ujian_id = $dom->getElementsByTagName('td')->item(1)->nodeValue;
+      
     	// Mengekstrak Nama Ujian
-    	$temp = explode(':', $dom->getElementsByTagName('td')->item(1)->nodeValue);
-    	$judul = trim(htmlentities($temp[1]));
+    	// $temp = explode(':', $dom->getElementsByTagName('td')->item(1)->nodeValue);
+    	// $judul = trim(htmlentities($temp[1]));
+      $judul = $dom->getElementsByTagName('td')->item(3)->nodeValue;
 
     	// Mengekstrak body soal
     	$dom_soal = $dom->getElementsByTagName('table')->item(0)->getElementsByTagName('tr');
