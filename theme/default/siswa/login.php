@@ -19,7 +19,7 @@
                 <div class="col-md-12">
                     <div id="logo">
                         <div id="logo-container">
-                            <img src="images/<?=get_app_config('LOGO_SEKOLAH')?>">
+                            <img src="<?=get_app_config('LOGO_SEKOLAH')?>">
                         </div>
                         <div style="float: left; margin-left: 10px">
                             <h3>Computer Based Test (CBT) - <?=get_app_config('NAMA_SEKOLAH')?> </h3>
