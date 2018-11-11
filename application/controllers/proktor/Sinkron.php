@@ -92,6 +92,7 @@ class Sinkron extends Home_proktor{
     $data = $this->db->query($sql)->result();
     $data = [
       'token' => $this->token,
+      'id_server' => $post['id_server'],
       'data' => json_encode($data)
     ];
     
@@ -100,7 +101,7 @@ class Sinkron extends Home_proktor{
     $curl->post($target, $data);
     if($curl->getHttpStatusCode() == 200){
       $r = $curl->response;
-      json_output(200, ['pesan' => 'ok', 'data_kirim' => $data['data'], 'sql' =>$sql,  'respon' => $r]);
+      json_output(200, ['pesan' => 'ok', 'aff_rows' => $r->aff_rows]);
     }else{
       json_output(200, array('pesan' => 'konek_gagal', 'resp' => $curl->getHttpStatusCode()));
     }

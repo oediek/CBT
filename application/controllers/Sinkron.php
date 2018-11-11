@@ -49,20 +49,21 @@ class Sinkron extends CI_Controller {
 	}
   
 	function terima_nilai(){
-		$this->__cek_token();		
-		$data = $this->input->post('data');
+    $this->__cek_token();
+    $data = json_decode($this->input->post('data'));
+    $id_server = $this->input->post('id_server');
     
-		// if(is_array($data)){
-		// 	// Hapus jawaban peserta yang lama
-		// 	$this->db->query('DELETE FROM peserta_jawaban');
+		if(count($data) > 0){
+			// Hapus jawaban peserta yang lama
+			$this->db->query("DELETE FROM peserta_jawaban 
+                        WHERE nis IN (SELECT nis FROM peserta WHERE server = '$id_server')");
 			
-		// 	// Masukan jawaban baru
-		// 	$aff_rows = $this->db->insert_batch($data);
-		// }else{
-		// 	$aff_rows = 0;
-		// }
-    log_message('custom', 'data : ' . $data);
-		json_output(200, ['data' => $data]);
+			// Masukan jawaban baru
+			$aff_rows = $this->db->insert_batch('peserta_jawaban', $data);
+		}else{
+			$aff_rows = 0;
+		}
+		json_output(200, ['aff_rows' => $aff_rows]);
 	}
   
 	private function __cek_token(){
