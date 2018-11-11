@@ -80,7 +80,7 @@ function is_active($th){
             <div class="navbar-header">
                 <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
                 <a href="javascript:void(0);" class="bars"></a>
-                <a class="navbar-brand" href="javascript:void(0)"> Computer Based Test (CBT) - <?=get_app_config('NAMA_SEKOLAH')?> </a>
+                <a class="navbar-brand" href="javascript:void(0)"><?=get_app_config('NAMA_SEKOLAH')?> </a>
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">                   

@@ -27,7 +27,7 @@
                             <img src="<?=get_app_config('LOGO_SEKOLAH')?>">
                         </div>
                         <div style="float: left; margin-left: 10px">
-                            <h3>Computer Based Test (CBT) - <?=get_app_config('NAMA_SEKOLAH')?> </h3>
+                            <h3><?=get_app_config('NAMA_SEKOLAH')?> </h3>
                         </div>
                     </div> <div id="welcome">
                         <!--
