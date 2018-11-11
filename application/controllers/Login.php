@@ -147,6 +147,7 @@ class Login extends CI_Controller{
 
 		// kunci peserta
 		$this->db->where("login = '$login'");
+		$this->db->where("ujian_id = '$ujian_id'");
 		$this->db->set('status', '1');
 		$this->db->update('peserta');
 	}
