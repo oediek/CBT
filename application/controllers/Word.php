@@ -37,18 +37,18 @@ class Word extends CI_Controller {
 	function simpan($req){
 		$konten = $req->decode_message($req->params[3]);
 		$login = $req->decode_message($req->params[1]);
-		$pass = $req->decode_message($req->params[2]);
-
+    $pass = $req->decode_message($req->params[2]);
+    
 		if (!login_webservice($login, $pass)) {
 			return $this->xmlrpc->send_error_message('100', 'Invalid Access');
 		}
 
-		// $judul = trim($konten['title']);
 		$lembar_soal = $konten['description'];
 
 		$ujian = $this->__parse_soal($lembar_soal);
 
 		if($this->__lolos_verifikasi_ujian($ujian)){
+      $ujian['judul'] = trim($konten['title']);
 			$this->__update_db_soal($lembar_soal, $ujian);
 			log_message('custom', 'Soal berhasil disimpan, ip : ' . $this->ip);
 			$response = array($ujian['ujian_id'], 'string');
@@ -63,7 +63,6 @@ class Word extends CI_Controller {
 		$user = $req->decode_message($req->params[1]);
 		$pass = $req->decode_message($req->params[2]);
 
-		log_message('custom', 'get_post dijalankan');
 
 		if (login_webservice($user, $pass)) {
 			return $this->xmlrpc->send_error_message('100', 'Invalid Access');
@@ -153,21 +152,13 @@ class Word extends CI_Controller {
     	$dom = new DOMDocument();
     	$dom->loadHTML($lembar_soal);
 
-    	// Mengekstrak ID Ujian
-    	// $temp = explode(':', $dom->getElementsByTagName('td')->item(0)->nodeValue);
-      // $ujian_id = trim($temp[1]);
       $ujian_id = $dom->getElementsByTagName('td')->item(1)->nodeValue;
-      
-    	// Mengekstrak Nama Ujian
-    	// $temp = explode(':', $dom->getElementsByTagName('td')->item(1)->nodeValue);
-    	// $judul = trim(htmlentities($temp[1]));
-      $judul = $dom->getElementsByTagName('td')->item(3)->nodeValue;
 
     	// Mengekstrak body soal
     	$dom_soal = $dom->getElementsByTagName('table')->item(0)->getElementsByTagName('tr');
     	$arr_soal = array();
     	$nomor = 1;
-    	for($n = 3; $n < $dom_soal->length; $n++){
+    	for($n = 1; $n < $dom_soal->length; $n++){
     		$kolom = $dom_soal->item($n)->getElementsByTagName('td');
     		
     		if($kolom->length == 4){
@@ -196,7 +187,6 @@ class Word extends CI_Controller {
     	}
 
     	return array(	'ujian_id'	=> $ujian_id,
-    					'judul'		=> $judul,
     					'soal'		=> $arr_soal,
     				);
 	}
