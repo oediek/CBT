@@ -104,7 +104,8 @@
           if(this.soalJson[idx].essay != 1){
             var done = (this.soalJson[idx].pilihan == null) ? 'not-done ' : 'done ';
             var active = (this.soalJson[idx].ragu != '1' && this.soalJson[idx].pilihan != null) ? 'active ' : ' ';
-            return 'no ' + done + active;
+            var ragu = (this.soalJson[idx].ragu == '1') ? ' ragu-ragu ' : '';
+            return 'no ' + done + active + ragu;
           }else{
             var done = (Boolean(this.soalJson[idx].jawaban_essay)) ? 'done active ': 'not-done ';
             return 'no ' + done;
