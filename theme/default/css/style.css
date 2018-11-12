@@ -178,7 +178,7 @@ span.option {
 #soal-foot {padding : 10px 20px; border-top : solid 1px #ccc; }
 #soal-foot .btn {font-size : 16px;padding : 13px 20px;border-radius : 0;}
 
-#summary {background  : #fff; border: solid 20px #f1f1f1; position : fixed; width  : 366px; right : 0; top : 70px; height : 500px; overflow-y:scroll; display : none;}
+#summary {background  : #fff; border: solid 20px #f1f1f1; position : fixed; width  : 366px; right : 0; top : 70px; height : 500px; overflow-y:scroll; display : none; z-index: 10000;}
 #summary .no {float : left; font-size : 24px; text-align: center; border : solid 10px #fff; position : relative; cursor : pointer;font-weight : bold;}
 #summary p {margin : 0; width : 55px;padding : 8px; text-align : center;border : solid 3px #333;}
 
