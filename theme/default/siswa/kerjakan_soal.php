@@ -217,7 +217,7 @@
     // Klik tombol nomor soall pada bagian summary
     $(document).on('click', '.no', function(){
       vueApp.idxSoal = $(this).data('idx');
-      $('#summary-button').trigger('click');
+      // $('#summary-button').trigger('click');
     });
     
     // Klik tombol simpan essay
