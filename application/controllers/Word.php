@@ -140,10 +140,10 @@ class Word extends CI_Controller {
 		}
 
 		// Periksa apakah kondisi soal sudah terkunci
-		if($r['status_soal'] == 2){
-			log_message('custom', 'Soal terkunci, IP : ' . $this->ip);
-			return FALSE;
-		}
+		// if($r['status_soal'] == 2){
+		// 	log_message('custom', 'Soal terkunci, IP : ' . $this->ip);
+		// 	return FALSE;
+		// }
 
 		return TRUE;
 	}
