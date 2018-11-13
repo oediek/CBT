@@ -190,6 +190,7 @@ class Word extends CI_Controller {
     }
     
     return array(	'ujian_id'	=> $ujian_id,
+    'soal'		=> $arr_soal,
   );
 }
 
