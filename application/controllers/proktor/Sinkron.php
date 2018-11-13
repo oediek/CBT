@@ -38,10 +38,8 @@ class Sinkron extends Home_proktor{
         // Simpan zip dari remote ke lokal
         $full_path_zip = $post['server_remote'] . '/index.php?c=sinkron&m=tarik_zip&zip=' . $r->nama_zip;
         $nama_sinkron = FCPATH . 'public/sinkron_' . $r->nama_zip;
-        $d = new Curl();
-        $d->setOpt(CURLOPT_ENCODING , '');
-        $d->download($full_path_zip, $nama_sinkron);
-        $d->close();
+        ini_set('max_execution_time', 0); 
+        file_put_contents($nama_sinkron, fopen($full_path_zip, 'r'));
         
         json_output(200, array('pesan' => 'ok', 'arsip_sinkron' => 'public/sinkron_' . $r->nama_zip));
         $curl->close();

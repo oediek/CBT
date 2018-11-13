@@ -201,7 +201,7 @@ span.option {
 #summary .no.ragu-ragu.done p,
 #summary .no.ragu-ragu {color : #fff; background : #edcb08}
 #summary .no.ragu-ragu span {border-color : #edcb08; color  :#edcb08 }
-#summary-button {position : fixed; right : 299px; top: 200px;}
+#summary-button {position : fixed; right : 299px; top: 200px; z-index: 10000;}
 
 .nomor {display : none;}
 

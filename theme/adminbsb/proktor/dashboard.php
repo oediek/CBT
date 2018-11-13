@@ -89,7 +89,7 @@
                                         <?php foreach($ujian_progres as $ujian):?>
                                             <tr>
                                                 <td><?=$n++?></td>
-                                                <td><a href="?d=proktor&c=monitor&m=peserta&ujian_id=<?=$ujian->ujian_id?>"><?=$ujian->judul?></a> <span class="label bg-light-blue">berlangsung</span></td>
+                                                <td><a href="?d=proktor&c=monitor&m=peserta&ujian_id=<?=$ujian->ujian_id?>"><?=$ujian->judul?></a> <span class="label bg-lime"><?=$ujian->jml_soal?> soal</span> <span class="label bg-light-blue">berlangsung</span></td>
                                                 <td><?=mysqldate_to_str($ujian->mulai)?></td>
                                                 <td><?=mysqldate_to_str($ujian->selesai)?></td>
                                                 <td><?=$ujian->jml_peserta?></td>
