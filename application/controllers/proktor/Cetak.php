@@ -11,6 +11,7 @@ class Cetak extends Home_proktor{
 	function index(){
     $sql = 'SELECT ujian_id, judul, status_soal, mulai, selesai, jml_soal
     FROM ujian ORDER BY mulai DESC';
+    $data['ujian'] = $this->db->query($sql)->result();
     $this->load->view('proktor/cetak/index', $data);
   }
   
