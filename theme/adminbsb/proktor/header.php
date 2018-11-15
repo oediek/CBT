@@ -170,11 +170,11 @@ function is_active($th){
                         </ul>
                     </li>                   
                     <li class="<?=css_class_active('cetak')?>">
-                        <a href="javascript:void(0)" class="menu-toggle waves-effect waves-block">
+                        <a href="<?=site_url('?d=proktor&c=cetak')?>" class="waves-effect waves-block">
                             <i class="material-icons">print</i>
                             <span>Cetak</span>
                         </a>
-                        <ul class="ml-menu">
+                        <!-- <ul class="ml-menu">
                             <li class="<?=css_class_active('kartu_peserta', 'm')?>">
                                 <a href="<?=site_url('?d=proktor&c=cetak&m=kartu_peserta')?>" class=" waves-effect waves-block">Kartu Peserta</a>
                             </li>   
@@ -184,7 +184,7 @@ function is_active($th){
                             <li class="<?=css_class_active('berita_acara', 'm')?>">
                                 <a href="<?=site_url('?d=proktor&c=cetak&m=berita_acara')?>" class=" waves-effect waves-block">Berita Acara</a>
                             </li>                          
-                        </ul>
+                        </ul> -->
                     </li>     
                     <li class="<?=css_class_active('alat')?>">
                         <a href="javascript:void(0)" class="menu-toggle waves-effect waves-block">
