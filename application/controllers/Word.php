@@ -1,6 +1,8 @@
 <?php 
 if (!defined('BASEPATH')) {	exit('No direct script access allowed'); }
 
+
+
 class Word extends CI_Controller {
   
 	function index(){
@@ -13,10 +15,36 @@ class Word extends CI_Controller {
 		$config['functions']['metaWeblog.editPost'] = array('function' => 'Word.simpan');
 		$config['functions']['metaWeblog.getPost'] = array('function' => 'Word.get_post');
 		$config['functions']['metaWeblog.newMediaObject'] = array('function' => 'Word.simpan_media');
+		$config['functions']['metaWeblog.getRecentPosts'] = array('function' => 'Word.post_terkini');
 		$config['object'] = $this;
 		$this->xmlrpcs->initialize($config);
-		$this->xmlrpcs->serve();
-	}
+    $this->xmlrpcs->serve();
+  }
+  
+  function post_terkini($req){
+    $this->load->helper('date');
+    
+    $sql = "SELECT ujian_id, judul, tgl_unggah FROM ujian";
+    $t_ujian = $this->db->query($sql)->result();
+    
+    $data = array();
+    foreach($t_ujian as $r){
+      $data[] = array(
+        array(
+          'postid' => array($r->ujian_id, 'string'),
+          'title' => array($r->ujian_id, 'string'),
+          'dateCreated' => array(standard_date('DATE_ISO8601', mysql_to_unix($r->tgl_unggah)), 'dateTime.iso8601'),
+          'description' => array('konten soal', 'string'),
+          'categories' => array(array(''), 'array'),
+          'publish' => array(1, 'boolean'),
+        ),
+        'struct'
+      );
+    }
+    
+    $response = array($data, 'array');
+    return $this->xmlrpc->send_response($response);
+  }
   
 	function getUsersBlogs($req) {
 		$prm = $req->output_parameters();
@@ -49,7 +77,10 @@ class Word extends CI_Controller {
     
 		if($this->__lolos_verifikasi_ujian($ujian)){
       $ujian['judul'] = trim($konten['title']);
-			$this->__update_db_soal($lembar_soal, $ujian);
+      
+      $this->__bersihkan_gambar($ujian['ujian_id']);
+      
+      $this->__update_db_soal($lembar_soal, $ujian);
 			log_message('custom', 'Soal berhasil disimpan, ip : ' . $this->ip);
 			$response = array($ujian['ujian_id'], 'string');
 			return $this->xmlrpc->send_response($response);
@@ -59,6 +90,7 @@ class Word extends CI_Controller {
 	}
   
 	function get_post($req){
+    log_message('custom', json_encode($req));
 		$post_id = $req->decode_message($req->params[0]);
 		$user = $req->decode_message($req->params[1]);
 		$pass = $req->decode_message($req->params[2]);
@@ -89,6 +121,7 @@ class Word extends CI_Controller {
 	}
   
 	function simpan_media($req) {
+		$post_id = $req->decode_message($req->params[0]);
 		$login = $req->decode_message($req->params[1]);
 		$pass = $req->decode_message($req->params[2]);
     
@@ -108,13 +141,13 @@ class Word extends CI_Controller {
 		$filename = uniqid() . '.' . $ext;
 		$abs_dir = FCPATH . $rel_dir;
     
-    
 		if ((file_exists($abs_dir) && is_dir($abs_dir)) == FALSE) { 
-			mkdir($abs_dir, 0777, true);
+			mkdir($abs_dir, 0775, true);
 		}
     
 		// $filename = substr($filename, (strrpos($filename, "/") ? strrpos($filename, "/") + 1 : 0));
 		if (write_file($abs_dir . $filename, $file['bits'])) {
+      log_message('custom', 'menulis : ' . $filename);
 			$response = array(
 				array(
 					'url' => array($rel_dir . $filename, 'string')
@@ -140,63 +173,65 @@ class Word extends CI_Controller {
 			return FALSE;
 		}
     
-		// Periksa apakah kondisi soal sudah terkunci
-		// if($r['status_soal'] == 2){
-      // 	log_message('custom', 'Soal terkunci, IP : ' . $this->ip);
-      // 	return FALSE;
-      // }
-      
-      return TRUE;
+    
+    return TRUE;
+  }
+  
+  private function __parse_soal($lembar_soal){
+    $dom = new DOMDocument();
+    $dom->loadHTML('<?xml encoding="UTF-8">' . $lembar_soal);
+    // dirty fix
+    foreach ($dom->childNodes as $item)
+      if ($item->nodeType == XML_PI_NODE)
+        $dom->removeChild($item); // remove hack
+    $dom->encoding = 'UTF-8'; // insert proper
+    
+    $ujian_id = $dom->getElementsByTagName('td')->item(1)->nodeValue;
+    $this->ujian_id = $ujian_id;
+    
+    // Mengekstrak body soal
+    $dom_soal = $dom->getElementsByTagName('tbody')->item(0)->childNodes;
+    
+    $arr_soal = array();
+    $nomor = 1;
+    
+    foreach($dom_soal as $k => $baris){
+      if($k == 0) {continue;}
+      $kolom = $baris->childNodes;
+      if($kolom->length == 4){
+        // Jika baris merupakan baris soal
+        $soal = array(	
+          'konten' 	=> get_inner_html($kolom->item(1)), 
+          'jawaban' => $kolom->item(2)->nodeValue,
+          'skor' 		=> (float)$kolom->item(3)->nodeValue,
+          'essay'		=> 0
+        );
+        $arr_soal[$nomor++] = array(
+          'soal' 		=> $soal,
+          'pilihan' 	=> array()
+        );
+      }else if($kolom->length == 2){
+        // Jika baris merupakan baris soal essay
+        $soal = array(	
+          'konten' 	=> get_inner_html($kolom->item(1)),
+          'jawaban'	=> '',
+          'skor'		=> 0,     							
+          'essay'		=> 1
+        );
+        $arr_soal[$nomor++] = array(
+          'soal' 		=> $soal,
+          'pilihan' 	=> array()
+        );
+      }else if($kolom->length == 5){
+        // Jika baris merupakan baris jawaban
+        $idx = trim($kolom->item(1)->nodeValue, " ");
+        $jawab = get_inner_html($kolom->item(2));
+        $arr_soal[count($arr_soal)]['pilihan'][$idx] = $jawab;
+      }
     }
     
-    private function __parse_soal($lembar_soal){
-      $dom = new DOMDocument();
-      $dom->loadHTML($lembar_soal);
-      
-      $ujian_id = $dom->getElementsByTagName('td')->item(1)->nodeValue;
-      
-      // Mengekstrak body soal
-      $dom_soal = $dom->getElementsByTagName('tbody')->item(0)->childNodes;
-      
-      $arr_soal = array();
-      $nomor = 1;
-      
-      foreach($dom_soal as $k => $baris){
-        if($k == 0) {continue;}
-        $kolom = $baris->childNodes;
-        if($kolom->length == 4){
-          // Jika baris merupakan baris soal
-          $soal = array(	
-            'konten' 	=> $this->__sanitize_from_word(get_inner_html($kolom->item(1))), 
-            'jawaban' => trim(filter_var($kolom->item(2)->nodeValue, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH), " "),
-            'skor' 		=> filter_var($kolom->item(3)->nodeValue, FILTER_SANITIZE_NUMBER_FLOAT),
-            'essay'		=> 0
-          );
-          $arr_soal[$nomor++] = array(
-            'soal' 		=> $soal,
-            'pilihan' 	=> array()
-          );
-        }else if($kolom->length == 2){
-          // Jika baris merupakan baris soal essay
-          $soal = array(	
-            'konten' 	=> get_inner_html($kolom->item(1)),
-            'jawaban'	=> '',
-            'skor'		=> 0,     							
-            'essay'		=> 1
-          );
-          $arr_soal[$nomor++] = array(
-            'soal' 		=> $soal,
-            'pilihan' 	=> array()
-          );
-        }else if($kolom->length == 5){
-          // Jika baris merupakan baris jawaban
-          $idx = trim(filter_var($kolom->item(1)->nodeValue, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH), " ");
-          $jawab = get_inner_html($kolom->item(2));
-          $arr_soal[count($arr_soal)]['pilihan'][$idx] = $jawab;
-        }
-      }
-      
-      return array(	'ujian_id'	=> $ujian_id,
+    return array(	
+      'ujian_id'	=> $ujian_id,
       'soal'		=> $arr_soal,
     );
   }
@@ -242,26 +277,28 @@ class Word extends CI_Controller {
     $this->db->query($sql2);
   }
   
-  private function __sanitize_from_word( $content ){
-    // Convert microsoft special characters
-    $replace = array(
-      "‘" => "'",
-      "’" => "'",
-      "”" => '"',
-      "“" => '"',
-      "–" => "-",
-      "—" => "-",
-      "…" => "&#8230;"
-    );
+  private function __bersihkan_gambar($ujian_id){
     
-    foreach($replace as $k => $v)
-    {
-      $content = str_replace($k, $v, $content);
+    $sql = "SELECT konten FROM ujian WHERE ujian_id = '$ujian_id'";
+    $r = $this->db->query($sql)->row();
+    if($r->konten !== null){
+      
+      $dom = new DOMDocument();
+      $dom->loadHTML($r->konten);
+      $tag_gambar = $dom->getElementsByTagName("img");
+      
+      foreach($tag_gambar as $img){
+        $gbr = FCPATH . $img->getAttribute('src');
+        // log_message('custom', 'menghapus : ' . $gbr);
+        if(file_exists($gbr)){
+          unlink($gbr);
+          log_message('custom', 'menghapus :' . $gbr);
+        }else{
+          log_message('custom', $gbr . ' tidak ada');
+        }
+        // rrmdir($gbr);
+        // @unlink($gbr);
+      }
     }
-    
-    // Remove any non-ascii character
-    $content = preg_replace('/[^\x20-\x7E]*/','', $content);
-    
-    return $content;
   }
 }
