@@ -232,7 +232,7 @@ function data_do_reset(){
     $CI->db->query('DELETE FROM soal');
     $CI->db->query('DELETE FROM ujian');
     // hapus folder gambar
-    rrmdir('images');
-    mkdir('images');
+    @rrmdir('images');
+    @mkdir('images');
     
 }

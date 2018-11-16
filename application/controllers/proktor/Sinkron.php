@@ -35,13 +35,7 @@ class Sinkron extends Home_proktor{
       if(!isset($r->pesan) || $r->pesan == 'token_gagal'){
         json_output(200, array('pesan' => 'token_gagal'));
       }else{
-        // Simpan zip dari remote ke lokal
-        $full_path_zip = $post['server_remote'] . '/index.php?c=sinkron&m=tarik_zip&zip=' . $r->nama_zip;
-        $nama_sinkron = FCPATH . 'public/sinkron_' . $r->nama_zip;
-        ini_set('max_execution_time', 0); 
-        file_put_contents($nama_sinkron, fopen($full_path_zip, 'r'));
-        
-        json_output(200, array('pesan' => 'ok', 'arsip_sinkron' => 'public/sinkron_' . $r->nama_zip));
+        json_output(200, array('pesan' => 'ok', 'nama_zip' => $r->nama_zip));
         $curl->close();
       }
     }else{
@@ -49,19 +43,29 @@ class Sinkron extends Home_proktor{
     }
   }
   
+  function do_tarik_2(){
+    // Simpan zip dari remote ke lokal
+    $nama_zip = $this->input->post('nama_zip');
+    $server_remote = $this->input->post('server_remote');
+    $full_path_zip = $server_remote . '/index.php?c=sinkron&m=tarik_zip&zip=' . $nama_zip;
+    $nama_sinkron = FCPATH . 'public/sinkron_' . $nama_zip;
+    ini_set('max_execution_time', 0); 
+    file_put_contents($nama_sinkron, fopen($full_path_zip, 'r'));
+    json_output(200, array('pesan' => 'ok'));
+  }
+  
   function do_restore(){
     // 1. Reset data
     data_do_reset();
     
     // 2. ekstrak backup
-    $arsip_sinkron = $this->input->get('arsip_sinkron');
-    $fullpath_arsip_sinkron = FCPATH . $arsip_sinkron;
+    $arsip_sinkron = $this->input->post('arsip_sinkron');
+    $fullpath_arsip_sinkron = FCPATH . 'public/sinkron_' . $arsip_sinkron;
     $ekstrak_path = FCPATH . 'public/tmp-sinkron';
     $berhasil_ekstrak = ekstrak_zip($fullpath_arsip_sinkron, $ekstrak_path);
     
     // 3. pindahkan gambar
     rcopy($ekstrak_path . '/images', FCPATH . 'images');
-    rrmdir($ekstrak_path . '/images');
     
     // 4. baca data json, sekaligus masukkan ke database
     $string = file_get_contents($ekstrak_path . '/data.json');

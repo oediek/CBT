@@ -67,10 +67,11 @@
                 closeOnConfirm: true                
             },function(tindas){
                 if(tindas){
-                    var action = '<?=site_url("?d=proktor&c=sinkron&m=do_tarik")?>';
-                    var data = frm.serialize();
-                    $('.loader').waitMe({text: 'Sinkronisasi server lokal dengan remote, mohon tunggu ... => (1/2)'});
-                    $.post(action, data, function(hasil){
+                    const target = '<?=site_url("?d=proktor&c=sinkron&m=do_tarik")?>';
+                    const data = JSON.parse(JSON.stringify(frm.serializeArray())); 
+                    
+                    $('.loader').waitMe({text: 'Sinkronisasi server lokal dengan remote, mohon tunggu ... => (1/3)'});
+                    $.post(target, data, function(hasil){
                         // console.log(hasil);
                         if(hasil.pesan == 'konek_gagal'){
                             swal({
@@ -89,11 +90,30 @@
                             $('.loader').waitMe('hide');
                             return;
                         }
-                        $('.loader').waitMe({text: 'Pemasangan data sinkronisasi, mohon tunggu ... => (2/2)'});
-                        $.get('<?=site_url("?d=proktor&c=sinkron&m=do_restore&arsip_sinkron=")?>' + hasil.arsip_sinkron, function(hasil){
-                            if(hasil.pesan == 'ok'){
-                                $('.loader').waitMe('hide');
+                        $('.loader').waitMe({text: 'Sedang mengunduh data sinkronisasi \
+                          ('+ data[0].value +'/public/'+ hasil.nama_zip +'). <br>Proses ini memerlukan waktu, \
+                          bergantung dari kecepatan koneksi... => (2/3)'});
+                        const target2 = '<?=site_url("?d=proktor&c=sinkron&m=do_tarik_2")?>';
+                        const data2 = {
+                          'nama_zip' : hasil.nama_zip,
+                          'server_remote' : data[0].value
+                        }
+                        $.post(target2, data2, function(hasil){
+                          if(hasil.pesan == 'ok'){
+                            $('.loader').waitMe({text: 'Sedang menerapkan data sinkronisasi ... => (3/3)'});
+                            const target3 = '<?=site_url("?d=proktor&c=sinkron&m=do_restore")?>';
+                            const data3 = {
+                              'arsip_sinkron' : data2.nama_zip
                             }
+                            $.post(target3, data3, function(hasil){
+                              $('.loader').waitMe('hide');
+                              swal({
+                                title: "Sukses",
+                                text: "Proses sinkronisasi telah selesai",
+                                type: "info"
+                              });
+                            });
+                          }
                         });
                     });
                 }
