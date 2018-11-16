@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `konfig` (
 /*!40000 ALTER TABLE `konfig` DISABLE KEYS */;
 INSERT INTO `konfig` (`konfig_id`, `nama_konfig`, `nilai_konfig`) VALUES
 	('LOGIN_SERVICE', 'Login webservice', 'guru'),
-	('LOGO_SEKOLAH', 'Logo Sekolah', 'logo.jpg'),
+	('LOGO_SEKOLAH', 'Logo Sekolah', 'logo.png'),
 	('NAMA_SEKOLAH', 'Nama Sekolah', 'SMP Negeri 1 Probolinggo'),
 	('PASS_SERVICE', 'Password webservice', 'rahasia'),
 	('THEME_COLOR', 'Warna Theme yang Aktif', 'theme-pink'),
@@ -47,19 +47,8 @@ CREATE TABLE IF NOT EXISTS `peserta` (
   CONSTRAINT `FK_peserta_ujian` FOREIGN KEY (`ujian_id`) REFERENCES `ujian` (`ujian_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Membuang data untuk tabel usbn.peserta: ~10 rows (lebih kurang)
+-- Membuang data untuk tabel usbn.peserta: ~0 rows (lebih kurang)
 /*!40000 ALTER TABLE `peserta` DISABLE KEYS */;
-INSERT INTO `peserta` (`ujian_id`, `nis`, `login`, `password`, `nama`, `kelas`, `server`, `sesi`, `status`, `last_login`) VALUES
-	('HLD6ZYU1PW', 'UBK090101', 'CBT1', '1', 'ADHISTY LIRA AGATHA', NULL, 'smp1', NULL, '3', '2018-10-31 17:08:11'),
-	('HLD6ZYU1PW', 'UBK090102', 'CBT2', '1', 'AISSURRO ISSLAMIAH M', NULL, 'smp1', NULL, '0', NULL),
-	('HLD6ZYU1PW', 'UBK090103', 'CBT3', '1', 'ANNISYATASYARIFIYAH VARACHMITA', NULL, 'smp1', NULL, '0', NULL),
-	('HLD6ZYU1PW', 'UBK090104', 'CBT4', '1', 'ANUGRAH FIRMANSYAH', NULL, 'smp1', NULL, '0', NULL),
-	('HLD6ZYU1PW', 'UBK090105', 'CBT5', '1', 'AUGUSTA AHMAD BINTANG WIDIGDO', NULL, 'smp1', NULL, '0', NULL),
-	('HLD6ZYU1PW', 'UBK090106', 'CBT6', '1', 'DELLA OKTAVIA SABINA', NULL, 'smp1', NULL, '0', NULL),
-	('HLD6ZYU1PW', 'UBK090107', 'CBT7', '1', 'DEWI NURAISYAH PUTRI NABILA', NULL, 'smp1', NULL, '0', NULL),
-	('HLD6ZYU1PW', 'UBK090108', 'CBT8', '1', 'DWI PUTRI SULISTYO AGUSTIN', NULL, 'smp1', NULL, '0', NULL),
-	('HLD6ZYU1PW', 'UBK090109', 'CBT9', '1', 'FATHIMAH NUR\'AINI', NULL, 'smp1', NULL, '0', NULL),
-	('HLD6ZYU1PW', 'UBK090110', 'CBT10', '1', 'FII NIDA ROSYADA UMMI ZAINAH', NULL, 'smp1', NULL, '0', NULL);
 /*!40000 ALTER TABLE `peserta` ENABLE KEYS */;
 
 -- membuang struktur untuk table usbn.peserta_jawaban
@@ -91,16 +80,8 @@ CREATE TABLE IF NOT EXISTS `pilihan_jawaban` (
   CONSTRAINT `FK_pilihan_jawaban_ujian` FOREIGN KEY (`ujian_id`) REFERENCES `ujian` (`ujian_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Membuang data untuk tabel usbn.pilihan_jawaban: ~7 rows (lebih kurang)
+-- Membuang data untuk tabel usbn.pilihan_jawaban: ~0 rows (lebih kurang)
 /*!40000 ALTER TABLE `pilihan_jawaban` DISABLE KEYS */;
-INSERT INTO `pilihan_jawaban` (`ujian_id`, `no_soal`, `pilihan_ke`, `konten`) VALUES
-	('HLD6ZYU1PW', 1, 'A', '<p>Jawab A</p>'),
-	('HLD6ZYU1PW', 1, 'B', '<p>Jawab B</p>'),
-	('HLD6ZYU1PW', 1, 'C', '<p>Jawab C</p>'),
-	('HLD6ZYU1PW', 1, 'D', '<p>Jawab D</p>'),
-	('HLD6ZYU1PW', 2, 'A', '<p>Jawaban 1</p>'),
-	('HLD6ZYU1PW', 2, 'B', '<p>Jawaban 2</p>'),
-	('HLD6ZYU1PW', 2, 'C', '<p>Jawaban 3</p>');
 /*!40000 ALTER TABLE `pilihan_jawaban` ENABLE KEYS */;
 
 -- membuang struktur untuk table usbn.proktor
@@ -130,12 +111,8 @@ CREATE TABLE IF NOT EXISTS `soal` (
   CONSTRAINT `FK_soal_ujian` FOREIGN KEY (`ujian_id`) REFERENCES `ujian` (`ujian_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Membuang data untuk tabel usbn.soal: ~3 rows (lebih kurang)
+-- Membuang data untuk tabel usbn.soal: ~0 rows (lebih kurang)
 /*!40000 ALTER TABLE `soal` DISABLE KEYS */;
-INSERT INTO `soal` (`ujian_id`, `no_soal`, `essay`, `konten`, `jawaban`, `skor`) VALUES
-	('HLD6ZYU1PW', 1, '0', '<p>Soal 1 <img src="images/2018/10/31/5bd960fce7f2d.png" alt=""/></p>', 'D', 50),
-	('HLD6ZYU1PW', 2, '0', '<p>Soal 2 <img src="images/2018/10/31/5bd960fd4815e.png" alt=""/></p>', 'A', 50),
-	('HLD6ZYU1PW', 3, '1', '<p>Soal Essay 1</p>', '', 0);
 /*!40000 ALTER TABLE `soal` ENABLE KEYS */;
 
 -- membuang struktur untuk table usbn.ujian
@@ -151,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `ujian` (
   `alokasi` int(11) DEFAULT NULL COMMENT 'Alokasi tersedia dalam menit',
   `jml_soal` int(11) DEFAULT NULL,
   `acak` char(1) DEFAULT '1' COMMENT '0 : Tidak acak, 1 : acak soal saja, 2 : acak soal dan jawaban',
-  `konten` text COMMENT 'Konten ms word dari soal ujian',
+  `konten` longtext COMMENT 'Konten ms word dari soal ujian',
   `sync` char(1) DEFAULT '0' COMMENT '0 : Belum sync ke dinas, 1 : Sudah sync dengan dinas',
   PRIMARY KEY (`ujian_id`),
   KEY `tgl_upload` (`tgl_unggah`),
@@ -160,10 +137,8 @@ CREATE TABLE IF NOT EXISTS `ujian` (
   KEY `judul` (`judul`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Membuang data untuk tabel usbn.ujian: ~1 rows (lebih kurang)
+-- Membuang data untuk tabel usbn.ujian: ~0 rows (lebih kurang)
 /*!40000 ALTER TABLE `ujian` DISABLE KEYS */;
-INSERT INTO `ujian` (`ujian_id`, `judul`, `jenis_ujian`, `token`, `status_soal`, `tgl_unggah`, `mulai`, `selesai`, `alokasi`, `jml_soal`, `acak`, `konten`, `sync`) VALUES
-	('HLD6ZYU1PW', 'BAHASA INDONESIA DENGAN ESSAY', '0', NULL, '2', '2018-10-31 14:59:57', '2018-10-31 00:00:00', '2018-10-31 23:00:00', 1440, 3, '1', '<div><table style="border-collapse:collapse" border="0"><colgroup><col style="width:22px"/><col style="width:42px"/><col style="width:449px"/><col style="width:57px"/><col style="width:63px"/></colgroup><tbody valign="top"><tr><td colspan="5" style="padding-left: 7px; padding-right: 7px; border-top:  solid 0.5pt; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>ID: <span style="color:black">HLD6ZYU1PW</span></p></td></tr><tr><td colspan="5" style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Nama Test : BAHASA INDONESIA DENGAN ESSAY</p></td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>JAWAB</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>SKOR</p></td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>1</p></td><td colspan="2" style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Soal 1 <img src="images/2018/10/31/5bd960fce7f2d.png" alt=""/></p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>D</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>50</p></td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>A</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Jawab A</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>B</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Jawab B</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>C</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Jawab C</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>D</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Jawab D</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>2</p></td><td colspan="2" style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Soal 2 <img src="images/2018/10/31/5bd960fd4815e.png" alt=""/></p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>A</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>50</p></td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>A</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Jawaban 1</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>B</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Jawaban 2</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>C</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Jawaban 3</p></td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"> </td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  solid 0.5pt; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>3</p></td><td colspan="4" style="padding-left: 7px; padding-right: 7px; border-top:  none; border-left:  none; border-bottom:  solid 0.5pt; border-right:  solid 0.5pt"><p>Soal Essay 1</p></td></tr></tbody></table></div>', '0');
 /*!40000 ALTER TABLE `ujian` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
