@@ -15,7 +15,33 @@ class Alat extends Home_proktor{
 	
 	function reset(){
 		$this->load->view('proktor/alat/reset.php');
-	}
+  }
+  
+  function optimize(){
+    $this->load->view('proktor/alat/optimize.php');
+  }
+
+  function do_optimize(){
+    $sql = "SELECT konten FROM ujian";
+    $data = $this->db->query($sql)->result();
+    $dom = new DOMDocument();
+    $jml_media = 0;
+    foreach($data as $r){
+      if($r->konten !== null){
+        @$dom->loadHTML($r->konten);
+        $tag_gambar = $dom->getElementsByTagName('img');
+        foreach($tag_gambar as $img){
+          $gbr = FCPATH . $img->getAttribute('src');
+          if(file_exists($gbr)) {
+            unlink($gbr);
+            $jml_media ++;
+          }
+        }
+      }
+    }
+    $data = ['pesan' => 'ok', 'jml_media' => $jml_media];
+    json_output(200, $data);
+  }
 	
 	function do_backup(){
 		// buat direktori backup

@@ -174,17 +174,6 @@ function is_active($th){
                             <i class="material-icons">print</i>
                             <span>Cetak</span>
                         </a>
-                        <!-- <ul class="ml-menu">
-                            <li class="<?=css_class_active('kartu_peserta', 'm')?>">
-                                <a href="<?=site_url('?d=proktor&c=cetak&m=kartu_peserta')?>" class=" waves-effect waves-block">Kartu Peserta</a>
-                            </li>   
-                            <li class="<?=css_class_active('presensi', 'm')?>">
-                                <a href="<?=site_url('?d=proktor&c=cetak&m=presensi')?>" class=" waves-effect waves-block">Presensi</a>
-                            </li>   
-                            <li class="<?=css_class_active('berita_acara', 'm')?>">
-                                <a href="<?=site_url('?d=proktor&c=cetak&m=berita_acara')?>" class=" waves-effect waves-block">Berita Acara</a>
-                            </li>                          
-                        </ul> -->
                     </li>     
                     <li class="<?=css_class_active('alat')?>">
                         <a href="javascript:void(0)" class="menu-toggle waves-effect waves-block">
@@ -193,14 +182,17 @@ function is_active($th){
                         </a>
                         <ul class="ml-menu">
                             <li class="<?=css_class_active('reset', 'm')?>">
-                                <a href="<?=site_url('?d=proktor&c=alat&m=reset')?>" class=" waves-effect waves-block">Reset</a>
+                              <a href="<?=site_url('?d=proktor&c=alat&m=reset')?>" class=" waves-effect waves-block">Reset</a>
                             </li>   
                             <li class="<?=css_class_active('backup', 'm')?>">
-                                <a href="<?=site_url('?d=proktor&c=alat&m=backup')?>" class=" waves-effect waves-block">Backup</a>
+                              <a href="<?=site_url('?d=proktor&c=alat&m=backup')?>" class=" waves-effect waves-block">Backup</a>
                             </li>   
                             <li class="<?=css_class_active('restore', 'm')?>">
-                                <a href="<?=site_url('?d=proktor&c=alat&m=restore')?>" class=" waves-effect waves-block">Restore</a>
-                            </li>                          
+                              <a href="<?=site_url('?d=proktor&c=alat&m=restore')?>" class=" waves-effect waves-block">Restore</a>
+                            </li>
+                            <!-- <li class="<?=css_class_active('optimize', 'm')?>">
+                              <a href="<?=site_url('?d=proktor&c=alat&m=optimize')?>" class=" waves-effect waves-block">Optimasi Penyimpan</a>
+                            </li>                        -->
                         </ul>
                     </li>                    
                     <li class="<?=css_class_active('profil')?>">
