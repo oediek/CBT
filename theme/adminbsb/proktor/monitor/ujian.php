@@ -115,7 +115,7 @@
                                         <li v-for="item in ujian_lalu">
                                             #{{item.judul}}
                                             <span class="pull-right">
-                                                <a href="javascript:void()"> 
+                                                <a :href="'?d=proktor&c=monitor&m=peserta&ujian_id=' + item.ujian_id"> 
                                                     <i class="material-icons">trending_up</i>
                                                 </a>
                                             </span>
@@ -138,7 +138,7 @@
                                         <li v-for="item in ujian_lanjut">
                                             #{{item.judul}}
                                             <span class="pull-right">
-                                                <a href="javascript:void()"> 
+                                                <a :href="'?d=proktor&c=monitor&m=peserta&ujian_id=' + item.ujian_id"> 
                                                     <i class="material-icons">trending_up</i>
                                                 </a>
                                             </span>
@@ -199,7 +199,7 @@
         },
         methods : {
             segarkanUjian : function(){
-                $.get('<?=site_url("?d=proktor&c=monitor&m=get_ujian&jenis=lalu")?>', function(hasil){
+                $.getJSON('<?=site_url("?d=proktor&c=monitor&m=get_ujian&jenis=lalu")?>', function(hasil){
                     // periksa, jika hasil tidak berupa array, ada kemungkinan session sudah habis, logout
                     if($.isArray(hasil)){
                         this.ujian_lalu = hasil;
@@ -208,11 +208,11 @@
                         document.location.href = "<?=site_url('?c=login&m=login_proktor')?>";
                     }
                 }.bind(this));
-                $.get('<?=site_url("?d=proktor&c=monitor&m=get_ujian&jenis=lanjut")?>', function(hasil){
+                $.getJSON('<?=site_url("?d=proktor&c=monitor&m=get_ujian&jenis=lanjut")?>', function(hasil){
                     this.ujian_lanjut = hasil;
                     this.segarkanGrafik();
                 }.bind(this));
-                $.get('<?=site_url("?d=proktor&c=monitor&m=get_ujian&jenis=progres")?>', function(hasil){
+                $.getJSON('<?=site_url("?d=proktor&c=monitor&m=get_ujian&jenis=progres")?>', function(hasil){
                     this.ujian_progres = hasil;
                     this.segarkanGrafik();
                 }.bind(this));
