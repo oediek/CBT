@@ -82,7 +82,8 @@
                                         
                                     <div v-for="item in ujian_progres" class="ujian-selesai">
                                         <p>
-                                            <a :href="'?d=proktor&c=monitor&m=peserta&ujian_id=' + item.ujian_id"># {{item.judul}}</a>
+                                            <a :href="'?d=proktor&c=monitor&m=peserta&ujian_id=' + item.ujian_id"># {{item.judul}}</a> - 
+                                            {{item.ujian_id}}
                                             <span class="label label-danger">{{item.belum_login}} belum login</span>
                                             <span class="label label-warning">{{item.pending}} pending</span>
                                             <span class="label label-info">{{item.progres}} sedang mengerjakan</span>
