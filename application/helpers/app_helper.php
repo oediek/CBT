@@ -185,8 +185,8 @@ function rrmdir($dir) {
     if (is_dir($dir)) {
         $files = scandir($dir);
         foreach ($files as $file)
-        if ($file != "." && $file != "..") rrmdir("$dir/$file");
-        rmdir($dir);
+          if ($file != "." && $file != "..") rrmdir("$dir/$file");
+          rmdir($dir);
     }
     else if (file_exists($dir)) unlink($dir);
 }
@@ -232,7 +232,7 @@ function data_do_reset(){
     $CI->db->query('DELETE FROM soal');
     $CI->db->query('DELETE FROM ujian');
     // hapus folder gambar
-    @rrmdir('images');
-    @mkdir('images');
+    rrmdir(FCPATH . 'images/');
+    mkdir(FCPATH . 'images');
     
 }
