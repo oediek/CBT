@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `konfig` (
 INSERT INTO `konfig` (`konfig_id`, `nama_konfig`, `nilai_konfig`) VALUES
 	('LOGIN_SERVICE', 'Login webservice', 'guru'),
 	('LOGO_SEKOLAH', 'Logo Sekolah', 'logo.png'),
-	('NAMA_SEKOLAH', 'Nama Sekolah', 'SMP Negeri 1 Probolinggo'),
+	('NAMA_SEKOLAH', 'Nama Sekolah', 'SMP NEGERI 3 PROBOLINGGO'),
 	('PASS_SERVICE', 'Password webservice', 'rahasia'),
 	('THEME_COLOR', 'Warna Theme yang Aktif', 'theme-pink'),
 	('TOKEN', 'Token Ujian', 'EQA4K');
