@@ -235,11 +235,15 @@ class Word extends CI_Controller {
         );
       }else if($kolom->length == 5){
         // Jika baris merupakan baris jawaban
-        $idx = strtoupper(trim($kolom->item(1)->nodeValue, " "));
+        $idx = trim(strtoupper($kolom->item(1)->nodeValue));
+        $idx = $idx[0];
 
         // hack pilihan untuk keperluan sessat (hanya menampung pilihan A s/d D)
         $hack_pilihan = ['A', 'B', 'C', 'D'];
-        if(!in_array($idx, $hack_pilihan)) continue;
+        if(!in_array($idx, $hack_pilihan)) {
+          log_message('custom', "pilihan $idx tidak sah");
+          continue;
+        }
         
         $jawab = get_inner_html($kolom->item(2));
         $arr_soal[count($arr_soal)]['pilihan'][$idx] = $jawab;
