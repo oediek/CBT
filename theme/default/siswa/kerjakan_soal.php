@@ -21,15 +21,25 @@
         </div>
         <div id="soal-body" style="display: block;">
           <div class="soal active">
-            <div class="isi-soal" v-html="soalJson[idxSoal].konten"></div>
-            <div v-if="(soalJson[idxSoal].essay != 1)" class="options-group">
-              <div class="options" v-for="pilihan, idx in soalJson[idxSoal].pilihan_jawaban" :data-pilihan_ke="pilihan.pilihan_ke">
-                <span :class="(pilihan.pilihan_ke == soalJson[idxSoal].pilihan) ? 'option checked' : 'option'" >
-                  <span class="inneroption"> {{String.fromCharCode(65 + idx)}} </span>
-                </span>
-                <p><span v-html="pilihan.konten"></span></p>
-              </div>                            
-            </div>
+            <table>
+              <tr>
+                <td>
+                  <div class="isi-soal" v-html="soalJson[idxSoal].konten"></div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div v-if="(soalJson[idxSoal].essay != 1)" class="options-group">
+                    <div class="options" v-for="pilihan, idx in soalJson[idxSoal].pilihan_jawaban" :data-pilihan_ke="pilihan.pilihan_ke">
+                      <span :class="(pilihan.pilihan_ke == soalJson[idxSoal].pilihan) ? 'option checked' : 'option'" >
+                        <span class="inneroption"> {{String.fromCharCode(65 + idx)}} </span>
+                      </span>
+                      <p><span v-html="pilihan.konten"></span></p>
+                    </div>                            
+                  </div>
+                </td>
+              </tr>
+            </table>
             <div v-if="(soalJson[idxSoal].essay == 1)">
               <!-- <wysiwyg v-model="soalJson[idxSoal].jawaban_essay" /> -->
               <vue-html5-editor :content="soalJson[idxSoal].jawaban_essay" :height="150" @change="updateData" ref="editor"></vue-html5-editor>
