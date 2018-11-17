@@ -68,6 +68,7 @@ class Word extends CI_Controller {
     $pass = $req->decode_message($req->params[2]);
     
 		if (!login_webservice($login, $pass)) {
+
 			return $this->xmlrpc->send_error_message('100', 'Invalid Access');
 		}
     
@@ -81,7 +82,8 @@ class Word extends CI_Controller {
       $this->__bersihkan_gambar($ujian['ujian_id']);
       
       $this->__update_db_soal($lembar_soal, $ujian);
-			log_message('custom', 'Soal berhasil disimpan, ip : ' . $this->ip);
+      log_message('custom', 'Soal berhasil disimpan, ip : ' . $this->ip);
+      $this->session->tmp_gbr = [];
 			$response = array($ujian['ujian_id'], 'string');
 			return $this->xmlrpc->send_response($response);
 		}else{			
@@ -126,6 +128,8 @@ class Word extends CI_Controller {
 		$pass = $req->decode_message($req->params[2]);
     
 		if (!login_webservice($login, $pass)) {
+      $this>__bersihkan_tmp_gbr();
+      $this->session->tmp_gbr = [];
 			return $this->xmlrpc->send_error_message('100', 'Invalid Access');
 		}
     
@@ -152,24 +156,31 @@ class Word extends CI_Controller {
 				array(
 					'url' => array($rel_dir . $filename, 'string')
 				), 'struct'
-			);
+      );
+      $this->__tambah_tmp_gbr($abs_dir . $filename);
 			return $this->xmlrpc->send_response($response);
 		}
-		return $this->xmlrpc->send_error_message('2', 'File Failed to Write');
+    return $this->xmlrpc->send_error_message('2', 'File Failed to Write');
+    $this>__bersihkan_tmp_gbr();
+    $this->session->tmp_gbr = [];
 	}
   
 	private function __lolos_verifikasi_ujian($ujian){
 		// Periksa apakah ID ujian telah tersedia
 		$r = $this->__get_ujian($ujian['ujian_id']); 
 		if(empty($r)){
-			log_message('custom', 'ID Ujian tak ditemukan, IP : ' . $this->ip);
+      log_message('custom', 'ID Ujian tak ditemukan, IP : ' . $this->ip);
+      $this->__bersihkan_tmp_gbr();
+      $this->session->tmp_gbr = [];
 			return FALSE;
 		}
     
     // Periksa apakah jumlah soal telah sesuai dengan setting(konfigurasi) di Excel
     $jml_soal_word = count($ujian['soal']);
 		if($r['jml_soal'] != $jml_soal_word){
-			log_message('custom', "Jumlah soal di ms word ($jml_soal_word) tidak sama dengan Excel ($r[jml_soal]), IP : " . $this->ip);
+      log_message('custom', "Jumlah soal di ms word ($jml_soal_word) tidak sama dengan Excel ($r[jml_soal]), IP : " . $this->ip);
+      $this->__bersihkan_tmp_gbr();
+      $this->session->tmp_gbr = [];
 			return FALSE;
 		}
     
@@ -301,9 +312,24 @@ class Word extends CI_Controller {
         }else{
           log_message('custom', $gbr . ' tidak ada');
         }
-        // rrmdir($gbr);
-        // @unlink($gbr);
       }
     }
   }
+
+  private function __tambah_tmp_gbr($nama_file){
+    $tmp_gbr = $this->session->tmp_gbr;
+    $tmp_gbr[] = $nama_file;
+    $this->session->tmp_gbr = $tmp_gbr;
+  }
+
+  private function __bersihkan_tmp_gbr(){
+    if(count($this->session->tmp_gbr) > 0){
+      foreach($this->session->tmp_gbr as $gbr){
+        if(file_exists($gbr)){
+          @unlink($gbr);
+        }
+      }
+    }
+  }
+
 }
