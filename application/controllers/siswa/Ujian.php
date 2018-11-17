@@ -95,13 +95,13 @@ class Ujian extends Home_siswa{
 		echo 'ok';
 	}
 
-	private function __detail_ujian(){
+	private function __detail_ujian(){   
 		$this->db->where('ujian_id', $this->session->ujian_id);
 		$r = $this->db->get('ujian')->row();
 		$data['ujian_nama'] = $r->judul;
 		$data['ujian_jenis'] = $r->jenis_ujian;
 		$data['ujian_mulai'] = $r->mulai;
-		$data['ujian_selesai'] = $r->selesai;
+		$data['ujian_selesai'] = $this->__hitung_waktu_selesai($r->alokasi);
 		$data['ujian_alokasi'] = $r->alokasi;
 		$data['ujian_acak'] = $r->acak;
 		$skrg = getdate();
@@ -177,5 +177,14 @@ class Ujian extends Home_siswa{
 		}else{
 			return 0;
 		}
-	}
+  }
+  
+  private function __hitung_waktu_selesai($alokasi){
+		$this->db->where('ujian_id', $this->session->ujian_id);
+		$this->db->where('nis', $this->session->nis);
+		$this->db->where('login', $this->session->login);
+    $this->db->select('last_login');
+    $r = $this->db->get('peserta')->row();
+    return interval_tgl($r->last_login, $alokasi);
+  }
 }

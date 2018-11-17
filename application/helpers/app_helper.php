@@ -42,6 +42,12 @@ function interval_tgl($tgl_mulai, $interval){
 	return $time->format('Y-m-d H:i');
 }
 
+// Mendapatkan jam akhir pada tanggal tertentu
+function jam_akhir($tgl){
+  $tmp = explode(' ', $tgl);
+  return $tmp[0] . ' ' . '23:59:59';
+}
+
 // konversi kode jenis ujian
 function jenis_ujian($kode){
     $arr = array('0' => 'Ulangan Harian', '1' => 'USBN');

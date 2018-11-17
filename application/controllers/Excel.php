@@ -14,7 +14,8 @@ class Excel extends CI_Controller {
 
 	function ujian_baru(){
 		$post = $this->input->post();
-		$selesai = interval_tgl($post['mulai'], $post['alokasi']);
+    // $selesai = interval_tgl($post['mulai'], $post['alokasi']);
+    $selesai = jam_akhir($post['mulai']);
 		$peserta = json_decode($post['peserta'], TRUE);
 		$ujian_id = string_acak(10);
 
@@ -42,7 +43,9 @@ class Excel extends CI_Controller {
 
 	function sunting_ujian(){
 		$post = $this->input->post();
-		$selesai = interval_tgl($post['mulai'], $post['alokasi']);
+    // $selesai = interval_tgl($post['mulai'], $post['alokasi']);
+    $selesai = jam_akhir($post['mulai']);
+    log_message('custom', "mulai : $post[mulai], selesai : $selesai");
 		$peserta = json_decode($post['peserta'], TRUE);
 		$ujian_id = $post['ujian_id'];
 
